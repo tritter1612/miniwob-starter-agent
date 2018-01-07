@@ -21,7 +21,7 @@ def create_env(env_id, client_id, remotes, **kwargs):
         return create_flash_env(env_id, client_id, remotes, **kwargs)
     elif spec.tags.get('atari', False) and spec.tags.get('vnc', False):
         return create_vncatari_env(env_id, client_id, remotes, **kwargs)
-    elif spec.tags.get('world-of-bits', False): #TODO: tag doesn't work yet
+    elif spec.tags.get('wob', False):
         return create_miniwob_env(env_id, client_id, remotes, **kwargs)
     else:
         # Assume atari.
