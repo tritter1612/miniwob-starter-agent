@@ -116,8 +116,8 @@ Setting up Tensorflow for data parallel work
     parser.add_argument('--task', default=0, type=int, help='Task index')
     parser.add_argument('--job-name', default="worker", help='worker or ps')
     parser.add_argument('--num-workers', default=1, type=int, help='Number of workers')
-    parser.add_argument('--log-dir', default="/tmp/pong", help='Log directory path')
-    parser.add_argument('--env-id', default="PongDeterministic-v3", help='Environment id')
+    parser.add_argument('--log-dir', default="/tmp/clicktest", help='Log directory path')
+    parser.add_argument('--env-id', default="wob.mini.ClickTest-v0", help='Environment id')
     parser.add_argument('-r', '--remotes', default=None,
                         help='References to environments to create (e.g. -r 20), '
                              'or the address of pre-existing VNC servers and '
