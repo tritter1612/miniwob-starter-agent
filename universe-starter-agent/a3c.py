@@ -147,7 +147,7 @@ runner appends the policy to the queue.
                 if length >= timestep_limit or not env.metadata.get('semantics.autoreset'):
                     last_state = env.reset()
                 last_features = policy.get_initial_features()
-                print("Episode finished. Sum of rewards: %d. Length: %d" % (rewards, length))
+                print("Episode finished. Sum of rewards: %f. Length: %d" % (rewards, length))
                 length = 0
                 rewards = 0
                 break
