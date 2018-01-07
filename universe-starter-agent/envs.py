@@ -88,7 +88,7 @@ def create_vncminiwob_env(env_id, client_id, remotes, **_):
     env = BlockingReset(env)
 
     env = CropScreen(env, 160, 160, 125, 10)
-    env = FlashRescale(env) # TODO: make WobRescale work
+    env = WobRescale(env)
 
     logger.info('create_miniwob_env(%s): ', env_id)
 
@@ -301,16 +301,17 @@ class FlashRescale(vectorized.ObservationWrapper):
         return [_process_frame_flash(observation) for observation in observation_n]
 
 def _process_frame_wob(frame):
-    frame = cv2.resize(frame, (160, 160))
+    frame = frame[160, 160]
+    frame = cv2.resize(frame, (80, 80))
     frame = frame.mean(2).astype(np.float32)
     frame *= (1.0 / 255.0)
-    frame = np.reshape(frame, [160, 160, 1])
+    frame = np.reshape(frame, [80, 80, 1])
     return frame
 
 class WobRescale(vectorized.ObservationWrapper):
     def __init__(self, env=None):
         super(WobRescale, self).__init__(env)
-        self.observation_space = Box(0.0, 1.0, [160, 160, 1])
+        self.observation_space = Box(0.0, 1.0, [160, 160, 3])
 
     def _observation(self, observation_n):
         return [_process_frame_wob(observation) for observation in observation_n]
