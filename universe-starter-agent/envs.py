@@ -82,16 +82,15 @@ def create_atari_env(env_id):
     return env
 
 def create_miniwob_env(env_id):
-    env = gym.make(env_id)
-    env.configure(remotes=1, fps=5,
-              vnc_driver='go', 
-              vnc_kwargs={'encoding': 'tight', 'compress_level': 0, 
-                          'fine_quality_level': 100, 'subsample_level': 0})
-    """
+    env = gym.make('wob.mini.ClickTest-v0')   
     env = Vectorize(env)
     env = WobRescale(env)
     env = DiagnosticsInfo(env)
-    env = Unvectorize(env)"""
+    env = Unvectorize(env)
+    """env.configure(remotes=1, fps=5,
+              vnc_driver='go',
+              vnc_kwargs={'encoding': 'tight', 'compress_level': 0,
+                          'fine_quality_level': 100, 'subsample_level': 0})"""
     return env
 
 def DiagnosticsInfo(env, *args, **kwargs):
