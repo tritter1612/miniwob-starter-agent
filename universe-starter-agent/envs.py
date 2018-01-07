@@ -15,16 +15,19 @@ logger.setLevel(logging.INFO)
 universe.configure_logging()
 
 def create_env(env_id, client_id, remotes, **kwargs):
-    spec = gym.spec(env_id)
+    #spec = gym.spec(env_id)
 
-    if spec.tags.get('flashgames', False):
+    env_id = 'wob.mini.ClickTest-v0'
+    return create_miniwob_env(env_id)
+
+    """if spec.tags.get('flashgames', False):
         return create_flash_env(env_id, client_id, remotes, **kwargs)
     elif spec.tags.get('atari', False) and spec.tags.get('vnc', False):
         return create_vncatari_env(env_id, client_id, remotes, **kwargs)
     else:
         # Assume atari.
         assert "." not in env_id  # universe environments have dots in names.
-        return create_atari_env(env_id)
+        return create_atari_env(env_id)"""
 
 def create_flash_env(env_id, client_id, remotes, **_):
     env = gym.make(env_id)
@@ -74,6 +77,14 @@ def create_atari_env(env_id):
     env = gym.make(env_id)
     env = Vectorize(env)
     env = AtariRescale42x42(env)
+    env = DiagnosticsInfo(env)
+    env = Unvectorize(env)
+    return env
+
+def create_miniwob_env(env_id):
+    env = gym.make(env_id)
+    env = Vectorize(env)
+    env = WobRescale(env)
     env = DiagnosticsInfo(env)
     env = Unvectorize(env)
     return env
@@ -275,3 +286,18 @@ class FlashRescale(vectorized.ObservationWrapper):
 
     def _observation(self, observation_n):
         return [_process_frame_flash(observation) for observation in observation_n]
+
+def _process_frame_wob(frame):
+    frame = cv2.resize(frame, (200, 128))
+    frame = frame.mean(2).astype(np.float32)
+    frame *= (1.0 / 255.0)
+    frame = np.reshape(frame, [128, 200, 1])
+    return frame
+
+class WobRescale(vectorized.ObservationWrapper):
+    def __init__(self, env=None):
+        super(WobRescale, self).__init__(env)
+        self.observation_space = Box(0.0, 1.0, [128, 200, 1])
+
+    def _observation(self, observation_n):
+        return [_process_frame_wob(observation) for observation in observation_n]
