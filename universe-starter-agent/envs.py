@@ -21,8 +21,8 @@ def create_env(env_id, client_id, remotes, **kwargs):
         return create_flash_env(env_id, client_id, remotes, **kwargs)
     elif spec.tags.get('atari', False) and spec.tags.get('vnc', False):
         return create_vncatari_env(env_id, client_id, remotes, **kwargs)
-    elif spec.tags.get('wob', False):
-        return create_miniwob_env(env_id, client_id, remotes, **kwargs)
+    elif spec.tags.get('wob', False) and spec.tags.get('vnc', False):
+        return create_vncminiwob_env(env_id, client_id, remotes, **kwargs)
     else:
         # Assume atari.
         assert "." not in env_id  # universe environments have dots in names.
@@ -80,7 +80,7 @@ def create_atari_env(env_id):
     env = Unvectorize(env)
     return env
 
-def create_miniwob_env(env_id, client_id, remotes, **_):
+def create_vncminiwob_env(env_id, client_id, remotes, **_):
     env = gym.make(env_id)
     env = Vision(env)
     env = Logger(env)
