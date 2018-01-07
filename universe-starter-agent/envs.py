@@ -15,19 +15,18 @@ logger.setLevel(logging.INFO)
 universe.configure_logging()
 
 def create_env(env_id, client_id, remotes, **kwargs):
-    #spec = gym.spec(env_id)
+    spec = gym.spec(env_id)
 
-    env_id = 'wob.mini.ClickTest-v0'
-    return create_miniwob_env(env_id)
-
-    """if spec.tags.get('flashgames', False):
+    if spec.tags.get('flashgames', False):
         return create_flash_env(env_id, client_id, remotes, **kwargs)
     elif spec.tags.get('atari', False) and spec.tags.get('vnc', False):
         return create_vncatari_env(env_id, client_id, remotes, **kwargs)
+    elif spec.tags.get('world-of-bits', False): #TODO: tag doesn't work yet
+        return create_miniwob_env(env_id, client_id, remotes, **kwargs)
     else:
         # Assume atari.
         assert "." not in env_id  # universe environments have dots in names.
-        return create_atari_env(env_id)"""
+        return create_atari_env(env_id)
 
 def create_flash_env(env_id, client_id, remotes, **_):
     env = gym.make(env_id)
@@ -81,16 +80,27 @@ def create_atari_env(env_id):
     env = Unvectorize(env)
     return env
 
-def create_miniwob_env(env_id):
-    env = gym.make('wob.mini.ClickTest-v0')   
-    env = Vectorize(env)
-    env = WobRescale(env)
+def create_miniwob_env(env_id, client_id, remotes, **_):
+    env = gym.make(env_id)
+    env = Vision(env)
+    env = Logger(env)
+    env = BlockingReset(env)
+
+    env = CropScreen(env, 160, 160, 125, 10)
+    env = FlashRescale(env)
+
+    keys = ['left', 'right', 'up', 'down', 'x'] #TODO: keys are still wrong for ClickTest
+
+    logger.info('create_miniwob_env(%s): ', env_id)
+
+    env = DiscreteToFixedKeysVNCActions(env, keys)
+    env = EpisodeID(env)
     env = DiagnosticsInfo(env)
     env = Unvectorize(env)
-    """env.configure(remotes=1, fps=5,
-              vnc_driver='go',
-              vnc_kwargs={'encoding': 'tight', 'compress_level': 0,
-                          'fine_quality_level': 100, 'subsample_level': 0})"""
+    env.configure(fps=5.0, remotes=remotes, start_timeout=15 * 60, client_id=client_id,
+                  vnc_driver='go', vnc_kwargs={
+                    'encoding': 'tight', 'compress_level': 0,
+                    'fine_quality_level': 100, 'subsample_level': 0})
     return env
 
 def DiagnosticsInfo(env, *args, **kwargs):
