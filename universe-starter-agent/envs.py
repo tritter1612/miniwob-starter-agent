@@ -301,11 +301,12 @@ class FlashRescale(vectorized.ObservationWrapper):
         return [_process_frame_flash(observation) for observation in observation_n]
 
 def _process_frame_wob(frame):
-    frame = frame[160, 160]
-    frame = cv2.resize(frame, (80, 80))
-    frame = frame.mean(2).astype(np.float32)
+    # frame = frame[160, 160]
+    # frame = cv2.resize(frame, (80, 80))
+    # frame = frame.mean(2).astype(np.float32)
+    frame = frame.astype(np.float32)
     frame *= (1.0 / 255.0)
-    frame = np.reshape(frame, [80, 80, 1])
+    frame = np.reshape(frame, [160, 160, 3])
     return frame
 
 class WobRescale(vectorized.ObservationWrapper):
