@@ -23,7 +23,7 @@ def create_env(env_id, client_id, remotes, **kwargs):
     elif spec.tags.get('atari', False) and spec.tags.get('vnc', False):
         return create_vncatari_env(env_id, client_id, remotes, **kwargs)
     elif spec.tags.get('wob', False):
-        return create_vncminiwob_env(env_id, client_id, remotes, **kwargs)
+        return create_miniwob_env(env_id, client_id, remotes, **kwargs)
     else:
         # Assume atari.
         assert "." not in env_id  # universe environments have dots in names.
@@ -81,14 +81,20 @@ def create_atari_env(env_id):
     env = Unvectorize(env)
     return env
 
-def create_vncminiwob_env(env_id, client_id, remotes, **_):
+def create_miniwob_env(env_id, client_id, remotes, **_):
     env = gym.make(env_id)
     env = Vision(env)
     env = Logger(env)
     env = BlockingReset(env)
 
     env = CropScreen(env, 160, 160, 125, 10)
-    env = WobRescale(env)
+    if env_id == 'wob.mini.ClickTest-v0':
+        height = 80
+        width = 80
+    else:
+        height = 100
+        width = 100
+    env = WobRescale(env, height, width)
 
     logger.info('create_miniwob_env(%s): ', env_id)
 
@@ -300,18 +306,20 @@ class FlashRescale(vectorized.ObservationWrapper):
     def _observation(self, observation_n):
         return [_process_frame_flash(observation) for observation in observation_n]
 
-def _process_frame_wob(frame):
-    frame = cv2.resize(frame, (80, 80))
+def _process_frame_wob(frame, height, width):
+    frame = cv2.resize(frame, (height, width))
     frame = frame.mean(2)
     frame = frame.astype(np.float32)
     frame *= (1.0 / 255.0)
-    frame = np.reshape(frame, [80, 80, 1])
+    frame = np.reshape(frame, [height, width, 1])
     return frame
 
 class WobRescale(vectorized.ObservationWrapper):
-    def __init__(self, env=None):
+    def __init__(self, env=None, height=None, width=None):
         super(WobRescale, self).__init__(env)
-        self.observation_space = Box(0.0, 1.0, [80, 80, 1])
+        self.height = height
+        self.width = width
+        self.observation_space = Box(0.0, 1.0, [height, width, 1])
 
     def _observation(self, observation_n):
-        return [_process_frame_wob(observation) for observation in observation_n]
+        return [_process_frame_wob(observation, self.height, self.width) for observation in observation_n]
