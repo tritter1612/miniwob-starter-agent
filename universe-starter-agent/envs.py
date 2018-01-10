@@ -315,7 +315,7 @@ def _process_frame_wob(frame, obs_height, obs_width):
     return frame
 
 class WobRescale(vectorized.ObservationWrapper):
-    def __init__(self, env=None, obd_height=None, obs_width=None):
+    def __init__(self, env=None, obs_height=None, obs_width=None):
         super(WobRescale, self).__init__(env)
         self.obs_height = obs_height
         self.obs_width = obs_width
