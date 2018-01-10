@@ -89,12 +89,12 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
 
     env = CropScreen(env, 160, 160, 125, 10)
     if env_id == 'wob.mini.ClickTest-v0':
-        height = 80
-        width = 80
+        obs_height = 80
+        obs_width = 80
     else:
-        height = 100
-        width = 100
-    env = WobRescale(env, height, width)
+        obs_height = 100
+        obs_width = 100
+    env = WobRescale(env, obs_height, obs_width)
 
     logger.info('create_miniwob_env(%s): ', env_id)
 
@@ -306,20 +306,20 @@ class FlashRescale(vectorized.ObservationWrapper):
     def _observation(self, observation_n):
         return [_process_frame_flash(observation) for observation in observation_n]
 
-def _process_frame_wob(frame, height, width):
-    frame = cv2.resize(frame, (height, width))
+def _process_frame_wob(frame, obs_height, obs_width):
+    frame = cv2.resize(frame, (obs_height, obs_width))
     frame = frame.mean(2)
     frame = frame.astype(np.float32)
     frame *= (1.0 / 255.0)
-    frame = np.reshape(frame, [height, width, 1])
+    frame = np.reshape(frame, [obs_height, obs_width, 1])
     return frame
 
 class WobRescale(vectorized.ObservationWrapper):
-    def __init__(self, env=None, height=None, width=None):
+    def __init__(self, env=None, obd_height=None, obs_width=None):
         super(WobRescale, self).__init__(env)
-        self.height = height
-        self.width = width
-        self.observation_space = Box(0.0, 1.0, [height, width, 1])
+        self.obs_height = obs_height
+        self.obs_width = obs_width
+        self.observation_space = Box(0.0, 1.0, [obs_height, obs_width, 1])
 
     def _observation(self, observation_n):
-        return [_process_frame_wob(observation, self.height, self.width) for observation in observation_n]
+        return [_process_frame_wob(observation, self.obs_height, self.obs_width) for observation in observation_n]
