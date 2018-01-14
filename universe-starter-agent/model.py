@@ -48,12 +48,20 @@ class LSTMPolicy(object):
     def __init__(self, ob_space, ac_space):
         self.x = x = tf.placeholder(tf.float32, [None] + list(ob_space))
 
-        for i in range(4):
-            x = tf.nn.elu(conv2d(x, 32, "l{}".format(i + 1), [3, 3], [2, 2]))
+        # for i in range(4):
+            # why num_filters = 32? why name = 'li [3, 3] [2, 2]" instead [3, 3] [1, 1] 
+            # x = tf.nn.elu(conv2d(x, 32, "l{}".format(i + 1), [3, 3], [2, 2]))
+        x = tf.nn.elu(conv2d(x, 16, "L0", [5, 5], [2, 2]))
+        x = tf.nn.elu(conv2d(x, 24, "L1", [5, 5], [2, 2]))
+        x = tf.nn.elu(conv2d(x, 32, "L2", [5, 5], [2, 2]))
+        x = tf.nn.elu(conv2d(x, 48, "L3", [5, 5], [2, 2]))
+        x = tf.nn.elu(conv2d(x, 32, "L4", [5, 5], [2, 2]))
+        x = tf.nn.avg_pool(x, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+                                                  
         # introduce a "fake" batch dimension of 1 after flatten so that we can do LSTM over time dim
         x = tf.expand_dims(flatten(x), [0])
 
-        size = 256
+        size = 384
         if use_tf100_api:
             lstm = rnn.BasicLSTMCell(size, state_is_tuple=True)
         else:

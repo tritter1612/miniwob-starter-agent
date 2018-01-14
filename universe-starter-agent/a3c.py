@@ -119,7 +119,9 @@ runner appends the policy to the queue.
         rollout = PartialRollout()
 
         for _ in range(num_local_steps):
+            # LSTMPolicy.act: here we run the network forward
             fetched = policy.act(last_state, *last_features)
+            # fetched is the result of the forward run. We take action from it and do a step
             action, value_, features = fetched[0], fetched[1], fetched[2:]
             # argmax to convert from one-hot
             state, reward, terminal, info = env.step(action.argmax())
@@ -268,7 +270,7 @@ server.
 
         sess.run(self.sync)  # copy weights from shared to local
         rollout = self.pull_batch_from_queue()
-        batch = process_rollout(rollout, gamma=0.99, lambda_=1.0)
+        batch = process_rollout(rollout, gamma=0.9, lambda_=0.95)
 
         should_compute_summary = self.task == 0 and self.local_steps % 11 == 0
 
