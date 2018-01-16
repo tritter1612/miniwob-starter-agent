@@ -88,7 +88,7 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
     env = BlockingReset(env)
 
     env = CropScreen(env, 160, 160, 125, 10)
-    env = WobRescale(env, 160, 160)
+    env = WobRescale(env, 80, 80)
 
     logger.info('create_miniwob_env(%s): ', env_id)
 
