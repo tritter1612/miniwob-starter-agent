@@ -88,7 +88,13 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
     env = BlockingReset(env)
 
     env = CropScreen(env, 160, 160, 125, 10)
-    env = WobRescale(env, 100, 100)
+    if env_id == 'wob.mini.ClickTest-v0':
+        obs_height = 80
+        obs_width = 80
+    else:
+        obs_height = 100
+        obs_width = 100
+    env = WobRescale(env, obs_height, obs_width)
 
     logger.info('create_miniwob_env(%s): ', env_id)
 
@@ -169,6 +175,7 @@ class DiagnosticsInfoI(vectorized.Filter):
                 to_log["diagnostics/vnc_updates_rectangles"] = info["stats.vnc.updates.rectangles"]
             if info.get("env_status.state_id") is not None:
                 to_log["diagnostics/env_state_id"] = info["env_status.state_id"]
+            # what of these statistics (see iuniverse/wrapper.logger.py) is part of our console output?
 
         if reward is not None:
             self._episode_reward += reward
@@ -301,7 +308,7 @@ class FlashRescale(vectorized.ObservationWrapper):
         return [_process_frame_flash(observation) for observation in observation_n]
 
 def _process_frame_wob(frame, obs_height, obs_width):
-    if (obs_height != 100) or (obs_width != 100):
+    if (obs_height != 160) or (obs_width != 160):
         frame = cv2.resize(frame, (obs_height, obs_width))
     frame = frame.mean(2)
     frame = frame.astype(np.float32)
@@ -310,7 +317,7 @@ def _process_frame_wob(frame, obs_height, obs_width):
     return frame
 
 class WobRescale(vectorized.ObservationWrapper):
-    def __init__(self, env=None, obs_height=100, obs_width=100):
+    def __init__(self, env=None, obs_height=160, obs_width=160):
         super(WobRescale, self).__init__(env)
         self.obs_height = obs_height
         self.obs_width = obs_width
