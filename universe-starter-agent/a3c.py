@@ -208,7 +208,7 @@ should be computed.
             # on the one hand;  but on the other hand, we get less frequent parameter updates, which
             # slows down learning.  In this code, we found that making local steps be much
             # smaller than 20 makes the algorithm more difficult to tune and to get to work.
-            self.runner = RunnerThread(env, pi, 200, visualise)
+            self.runner = RunnerThread(env, pi, 20, visualise)
 
 
             grads = tf.gradients(self.loss, pi.var_list)
@@ -270,7 +270,7 @@ server.
 
         sess.run(self.sync)  # copy weights from shared to local
         rollout = self.pull_batch_from_queue()
-        batch = process_rollout(rollout, gamma=0.9, lambda_=0.95)
+        batch = process_rollout(rollout, gamma=0.99, lambda_=1)
 
         should_compute_summary = self.task == 0 and self.local_steps % 11 == 0
 
