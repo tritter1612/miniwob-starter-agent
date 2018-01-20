@@ -53,7 +53,7 @@ class LSTMPolicy(object):
         # introduce a "fake" batch dimension of 1 after flatten so that we can do LSTM over time dim
         x = tf.expand_dims(flatten(x), [0])
 
-        size = 256
+        size = 512
         if use_tf100_api:
             lstm = rnn.BasicLSTMCell(size, state_is_tuple=True)
         else:
