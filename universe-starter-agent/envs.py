@@ -98,7 +98,11 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
 
     logger.info('create_miniwob_env(%s): ', env_id)
 
-    env = SoftmaxClickMouse(env, discrete_mouse_step=8)
+    if env_id == 'wob.mini.NumberCheckboxes-v0':
+        #ncr = (24, 244, 24 + 65, 244 + 20)
+        env = SoftmaxClickMouse(env, active_region=(10 + 14, 75 + 57, 24 + 65, 132 + 146), discrete_mouse_step=17)
+    else:
+        env = SoftmaxClickMouse(env, discrete_mouse_step=8)
     env = EpisodeID(env)
     env = DiagnosticsInfo(env)
     env = Unvectorize(env)
