@@ -44,53 +44,41 @@ def categorical_sample(logits, d):
     value = tf.squeeze(tf.multinomial(logits - tf.reduce_max(logits, [1], keep_dims=True), 1), [1])
     return tf.one_hot(value, d)
 
-class LSTMPolicy(object):
+class GRUPolicy(object):
     def __init__(self, ob_space, ac_space):
         self.x = x = tf.placeholder(tf.float32, [None] + list(ob_space))
 
         for i in range(4):
             x = tf.nn.elu(conv2d(x, 32, "l{}".format(i + 1), [3, 3], [2, 2]))
         # introduce a "fake" batch dimension of 1 after flatten so that we can do LSTM over time dim
-        x = tf.expand_dims(flatten(x), [0])
+        x = tf.expand_dims(flatten(x), 1)
+        x = tf.nn.dropout(x, 0.9)
+        size = 256
+        gru = rnn.GRUCell(size)
 
-        size = 512
-        if use_tf100_api:
-            lstm = rnn.BasicLSTMCell(size, state_is_tuple=True)
-        else:
-            lstm = rnn.rnn_cell.BasicLSTMCell(size, state_is_tuple=True)
-        self.state_size = lstm.state_size
-        step_size = tf.shape(self.x)[:1]
+        h_init = np.zeros((1, size), np.float32)
+        self.state_init = [h_init]
+        h_in = tf.placeholder(tf.float32, [1, size])
+        self.state_in = [h_in]
 
-        c_init = np.zeros((1, lstm.state_size.c), np.float32)
-        h_init = np.zeros((1, lstm.state_size.h), np.float32)
-        self.state_init = [c_init, h_init]
-        c_in = tf.placeholder(tf.float32, [1, lstm.state_size.c])
-        h_in = tf.placeholder(tf.float32, [1, lstm.state_size.h])
-        self.state_in = [c_in, h_in]
+        gru_outputs, gru_state = tf.nn.dynamic_rnn(
+            gru, x, initial_state=h_in, sequence_length=[size], time_major=True)
 
-        if use_tf100_api:
-            state_in = rnn.LSTMStateTuple(c_in, h_in)
-        else:
-            state_in = rnn.rnn_cell.LSTMStateTuple(c_in, h_in)
-        lstm_outputs, lstm_state = tf.nn.dynamic_rnn(
-            lstm, x, initial_state=state_in, sequence_length=step_size,
-            time_major=False)
-        lstm_c, lstm_h = lstm_state
-        x = tf.reshape(lstm_outputs, [-1, size])
+        x = tf.reshape(gru_outputs, [-1, size])
         self.logits = linear(x, ac_space, "action", normalized_columns_initializer(0.01))
         self.vf = tf.reshape(linear(x, 1, "value", normalized_columns_initializer(1.0)), [-1])
-        self.state_out = [lstm_c[:1, :], lstm_h[:1, :]]
+        self.state_out = [gru_state[:1]]
         self.sample = categorical_sample(self.logits, ac_space)[0, :]
         self.var_list = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, tf.get_variable_scope().name)
 
     def get_initial_features(self):
         return self.state_init
 
-    def act(self, ob, c, h):
+    def act(self, ob, h):
         sess = tf.get_default_session()
         return sess.run([self.sample, self.vf] + self.state_out,
-                        {self.x: [ob], self.state_in[0]: c, self.state_in[1]: h})
+                        {self.x: [ob], self.state_in[0]: h})
 
-    def value(self, ob, c, h):
+    def value(self, ob, h):
         sess = tf.get_default_session()
-        return sess.run(self.vf, {self.x: [ob], self.state_in[0]: c, self.state_in[1]: h})[0]
+        return sess.run(self.vf, {self.x: [ob], self.state_in[0]: h})[0]
