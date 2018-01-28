@@ -7,6 +7,9 @@ import six.moves.queue as queue
 import scipy.signal
 import threading
 import distutils.version
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 use_tf12_api = distutils.version.LooseVersion(tf.VERSION) >= distutils.version.LooseVersion('0.12.0')
 
 def discount(x, gamma):
@@ -130,6 +133,13 @@ runner appends the policy to the queue.
             rollout.add(last_state, action, reward, value_, terminal, last_features)
             length += 1
             rewards += reward
+            env_id = env.spec.id
+            if env_id == 'wob.mini.ChaseCircle-v0':
+                if reward != 0:
+                    logger.info('Episode step %d: reward: %f, sum of rewards: %f', length, reward, rewards)
+            else:
+                if reward > 0.0:
+                    terminal = True
 
             last_state = state
             last_features = features
