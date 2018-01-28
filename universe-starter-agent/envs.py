@@ -105,7 +105,7 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
     env = EpisodeID(env)
     env = DiagnosticsInfo(env)
     env = Unvectorize(env)
-    env.configure(fps=5.0, remotes=remotes, start_timeout=15 * 60, client_id=client_id,
+    env.configure(fps=8.0, remotes=remotes, start_timeout=15 * 60, client_id=client_id,
                   vnc_driver='go', vnc_kwargs={
                     'encoding': 'tight', 'compress_level': 0,
                     'fine_quality_level': 100, 'subsample_level': 0})
