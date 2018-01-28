@@ -88,7 +88,7 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
     env = BlockingReset(env)
 
     env = CropScreen(env, 160, 160, 125, 10)
-    if (env_id == 'wob.mini.ClickTest-v0') or (env_id == 'wob.mini.NumberCheckboxes-v0'):
+    if (env_id == 'wob.mini.ClickTest-v0') or (env_id == 'wob.mini.NumberCheckboxes-v0') or (env_id == 'wob.mini.ChaseCircle-v0'):
         obs_height = 80
         obs_width = 80
     else:
