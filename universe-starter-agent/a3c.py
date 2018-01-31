@@ -134,12 +134,8 @@ runner appends the policy to the queue.
             length += 1
             rewards += reward
             env_id = env.spec.id
-            if env_id == 'wob.mini.ChaseCircle-v0':
-                if reward != 0:
-                    logger.info('Episode step %d: reward: %f, sum of rewards: %f', length, reward, rewards)
-            else:
-                if reward > 0.0:
-                    terminal = True
+            if reward != 0:
+                logger.info('Episode step %d: reward: %f, sum of rewards: %f', length, reward, rewards)
 
             last_state = state
             last_features = features
