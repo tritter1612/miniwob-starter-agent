@@ -391,7 +391,7 @@ class EnvController(threading.Thread):
 
         # TODO: hack. pause for a few seconds to let RewarderThread know env
         # is being reset.
-        time.sleep(2)
+        time.sleep(.5)
         with self.cv:
             env_info = self.env_status.set_env_info('running')
             self.cv.notifyAll()
