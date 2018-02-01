@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7a41ce0e-0574-43fb-83be-720eb7231b16" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/universe-starter-agent/a3c.py" afterPath="$PROJECT_DIR$/universe-starter-agent/a3c.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -41,8 +40,8 @@
       <file leaf-file-name="a3c.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/universe-starter-agent/a3c.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="586">
-              <caret line="159" column="96" lean-forward="false" selection-start-line="159" selection-start-column="96" selection-end-line="159" selection-end-column="96" />
+            <state relative-caret-position="706">
+              <caret line="167" column="0" lean-forward="false" selection-start-line="167" selection-start-column="0" selection-end-line="167" selection-end-column="0" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
@@ -147,15 +146,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32941177" sideWeight="0.50277776" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32941177" sideWeight="0.49722221" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3279503" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32941177" sideWeight="0.49722221" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2532189" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="1.0" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25679544" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -183,6 +181,36 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/universe-starter-agent/envs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1230">
+          <caret line="94" column="24" lean-forward="false" selection-start-line="94" selection-start-column="24" selection-end-line="94" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/universe-starter-agent/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="720">
+          <caret line="51" column="77" lean-forward="false" selection-start-line="51" selection-start-column="77" selection-end-line="51" selection-end-column="77" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/universe-starter-agent/a3c.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2250">
+          <caret line="159" column="0" lean-forward="true" selection-start-line="159" selection-start-column="0" selection-end-line="159" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#37#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/universe-starter-agent/envs.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1230">
@@ -243,13 +271,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/universe/vectorized/core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="29" column="40" lean-forward="true" selection-start-line="29" selection-start-column="40" selection-end-line="29" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/universe/vectorized/core.py" />
     <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/gym/core.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
@@ -284,20 +306,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/universe/vectorized/core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="29" column="40" lean-forward="true" selection-start-line="29" selection-start-column="40" selection-end-line="29" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/universe/vectorized/vectorize_filter.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="32" column="12" lean-forward="false" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/universe/vectorized/core.py" />
+    <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/universe/vectorized/vectorize_filter.py" />
     <entry file="file://$PROJECT_DIR$/universe-starter-agent/envs.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="740">
@@ -345,20 +355,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/universe/vectorized/core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="369">
-          <caret line="29" column="40" lean-forward="true" selection-start-line="29" selection-start-column="40" selection-end-line="29" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/universe/vectorized/vectorize_filter.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="32" column="12" lean-forward="false" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/universe/vectorized/core.py" />
+    <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/universe/vectorized/vectorize_filter.py" />
     <entry file="file://$PROJECT_DIR$/universe-starter-agent/envs.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="436">
@@ -389,13 +387,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/universe/vectorized/core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="29" column="40" lean-forward="true" selection-start-line="29" selection-start-column="40" selection-end-line="29" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/universe/vectorized/core.py" />
     <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/gym/core.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
@@ -430,20 +422,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/universe/vectorized/core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="29" column="40" lean-forward="true" selection-start-line="29" selection-start-column="40" selection-end-line="29" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/universe/vectorized/vectorize_filter.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="32" column="12" lean-forward="false" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/universe/vectorized/core.py" />
+    <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/universe/vectorized/vectorize_filter.py" />
     <entry file="file://$PROJECT_DIR$/universe-starter-agent/envs.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="740">
@@ -491,20 +471,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/universe/vectorized/core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="369">
-          <caret line="29" column="40" lean-forward="true" selection-start-line="29" selection-start-column="40" selection-end-line="29" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/universe/vectorized/vectorize_filter.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="32" column="12" lean-forward="false" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/universe/vectorized/core.py" />
+    <entry file="file://$USER_HOME$/miniconda2/envs/universe-starter-agent/lib/python3.5/site-packages/universe/vectorized/vectorize_filter.py" />
     <entry file="file://$PROJECT_DIR$/universe-starter-agent/envs.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1230">
@@ -517,8 +485,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/universe-starter-agent/a3c.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="586">
-          <caret line="159" column="96" lean-forward="false" selection-start-line="159" selection-start-column="96" selection-end-line="159" selection-end-column="96" />
+        <state relative-caret-position="706">
+          <caret line="167" column="0" lean-forward="false" selection-start-line="167" selection-start-column="0" selection-end-line="167" selection-end-column="0" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
           </folding>

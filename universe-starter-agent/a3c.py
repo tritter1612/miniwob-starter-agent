@@ -104,8 +104,6 @@ that would constantly interact with the environment and tell it what to do.  Thi
 
             self.queue.put(next(rollout_provider), timeout=600.0)
 
-
-
 def env_runner(env, policy, num_local_steps, summary_writer, render):
     """
 The logic of the thread runner.  In brief, it constantly keeps on running
@@ -116,6 +114,9 @@ runner appends the policy to the queue.
     last_features = policy.get_initial_features()
     length = 0
     rewards = 0
+    episode = 0;
+    faulty_episodes = 0;
+    fault_in_episode = False
 
     while True:
         terminal_end = False
@@ -133,10 +134,11 @@ runner appends the policy to the queue.
             rollout.add(last_state, action, reward, value_, terminal, last_features)
             length += 1
             rewards += reward
-            env_id = env.spec.id
+            # log rewards and count faulty episodes
             if reward != 0:
-                logger.info('Episode step %d: reward: %f, sum of rewards: %f', length, reward, rewards)
-
+                logger.info('Episode %d step %d: reward: %f, sum of rewards: %f', episode, length, reward, rewards)
+                if not terminal and not fault_in_episode and env.spec.id != 'wob.mini.ChaseCircle-v0':
+                    fault_in_episode = True
             last_state = state
             last_features = features
 
@@ -153,7 +155,13 @@ runner appends the policy to the queue.
                 if length >= timestep_limit or not env.metadata.get('semantics.autoreset'):
                     last_state = env.reset()
                 last_features = policy.get_initial_features()
-                logger.info('Episode finished. Sum of rewards: %f. Length: %d', rewards, length)
+                logger.info('Episode %d finished. Sum of rewards: %f. Length: %d. Faulty episodes: %d', episode, rewards, length, faulty_episodes)
+                episode += 1
+                if fault_in_episode:
+                    # log fault
+                    faulty_episodes += 1
+                    fault_in_episode = False
+                    logger.warn('%d of %d episodes faulty so far (%f percent)', faulty_episodes, episode, (faulty_episodes*100.0)/episode)
                 length = 0
                 rewards = 0
                 break
@@ -163,6 +171,7 @@ runner appends the policy to the queue.
 
         # once we have enough experience, yield it, and have the ThreadRunner place it on a queue
         yield rollout
+
 
 class A3C(object):
     def __init__(self, env, task, visualise):
