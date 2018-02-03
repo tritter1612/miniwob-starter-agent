@@ -41,7 +41,7 @@ core.shuffle = function(array) {
 var WOB_REWARD_GLOBAL = 0; // what was reward in previous iteration?
 var WOB_DONE_GLOBAL = false; // a done indicator
 core.EPISODE_MAX_TIME = 10000; // in ms. Set default time to 10s.
-core.EPISODE_DELAY = 300; // Time to pause before generating a new episode, in ms.
+core.EPISODE_DELAY = 500; // Time to pause before generating a new episode, in ms.
 
 // https://stackoverflow.com/questions/3169786/clear-text-selection-with-javascript
 // this piece of code clears the selection in a new episode, if a user happened
