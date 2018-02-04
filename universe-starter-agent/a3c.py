@@ -117,6 +117,7 @@ runner appends the policy to the queue.
     episode = 0;
     faulty_episodes = 0;
     fault_in_episode = False
+    average_r = 0.0
 
     while True:
         terminal_end = False
@@ -136,7 +137,7 @@ runner appends the policy to the queue.
             rewards += reward
             # log rewards and count faulty episodes
             if reward != 0:
-                logger.info('Episode %d step %d: reward: %f, sum of rewards: %f', episode, length, reward, rewards)
+                logger.info('Episode %d step %d: reward: %f, sum of rewards: %f', episode+1, length, reward, rewards)
                 if not terminal and not fault_in_episode and env.spec.id != 'wob.mini.ChaseCircle-v0':
                     fault_in_episode = True
             last_state = state
@@ -155,13 +156,15 @@ runner appends the policy to the queue.
                 if length >= timestep_limit or not env.metadata.get('semantics.autoreset'):
                     last_state = env.reset()
                 last_features = policy.get_initial_features()
-                logger.info('Episode %d finished. Sum of rewards: %f. Length: %d. Faulty episodes: %d', episode, rewards, length, faulty_episodes)
                 episode += 1
+                average_r = (average_r * (episode-1) + rewards) / episode
+                logger.info('Episode %d finished. Sum of rewards: %1.4f, average so far %f. Length: %d. Faulty episodes: %d (%3.2f percent)',\
+                            episode, rewards, average_r, length, faulty_episodes, (faulty_episodes*100.0)/episode)
                 if fault_in_episode:
                     # log fault
                     faulty_episodes += 1
                     fault_in_episode = False
-                    logger.warn('%d of %d episodes faulty so far (%f percent)', faulty_episodes, episode, (faulty_episodes*100.0)/episode)
+                    # logger.warn('%d of %d episodes faulty so far (%f percent)', faulty_episodes, episode, (faulty_episodes*100.0)/episode)
                 length = 0
                 rewards = 0
                 break
@@ -206,9 +209,10 @@ should be computed.
             # the "policy gradients" loss:  its derivative is precisely the policy gradient
             # notice that self.ac is a placeholder that is provided externally.
             # adv will contain the advantages, as calculated in process_rollout
+            # Binary Cross Entropy Loss?
             pi_loss = - tf.reduce_sum(tf.reduce_sum(log_prob_tf * self.ac, [1]) * self.adv)
 
-            # loss of value function
+            # loss of value function (Mean Squared Error Loss)
             vf_loss = 0.5 * tf.reduce_sum(tf.square(pi.vf - self.r))
             entropy = - tf.reduce_sum(prob_tf * log_prob_tf)
 
