@@ -164,12 +164,22 @@ runner appends the policy to the queue.
                     fault_in_episode = False
                     # logger.warn('%d of %d episodes faulty so far (%f percent)', faulty_episodes, episode, (faulty_episodes*100.0)/episode)
                 if faulty_episodes > 0:
-                    logger.info('Episode %d finished. Sum of rewards: %1.4f, average so far %f. Length: %d. Faulty episodes: %d (%3.2f percent)',\
-                        episode, rewards, average_r, length, faulty_episodes, (faulty_episodes*100.0)/episode)
+                    if env.spec.id != 'wob.mini.ChaseCircle-v0':
+                        logger.info(
+                            'Episode %d finished. Sum of rewards: %1.4f, average so far: %f. Length: %d. Faulty episodes: %d (%3.2f percent)', \
+                            episode, rewards, average_r, length, faulty_episodes, (faulty_episodes * 100.0) / episode)
+                    else:
+                        logger.info(
+                            'Episode %d finished. Sum of rewards: %1.4f, average so far: %f. Length: %d. average/length: %f. Faulty episodes: %d (%3.2f percent)', \
+                            episode, rewards, average_r, length, average_r/length, faulty_episodes, (faulty_episodes * 100.0) / episode)
                 else:
                     # if there are no faulty episodes, don't spam the log
-                    logger.info('Episode %d finished. Sum of rewards: %1.4f, average so far %f. Length: %d.',\
-                                episode, rewards, average_r, length)
+                    if env.spec.id != 'wob.mini.ChaseCircle-v0':
+                        logger.info('Episode %d finished. Sum of rewards: %1.4f, average so far: %f. Length: %d.', \
+                                    episode, rewards, average_r, length)
+                    else:
+                        logger.info('Episode %d finished. Sum of rewards: %1.4f, average so far: %f. Length: %d. average/length: %f', \
+                                    episode, rewards, average_r, length, average_r/length)
                 length = 0
                 rewards = 0
                 break
