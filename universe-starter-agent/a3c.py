@@ -158,13 +158,18 @@ runner appends the policy to the queue.
                 last_features = policy.get_initial_features()
                 episode += 1
                 average_r = (average_r * (episode-1) + rewards) / episode
-                logger.info('Episode %d finished. Sum of rewards: %1.4f, average so far %f. Length: %d. Faulty episodes: %d (%3.2f percent)',\
-                            episode, rewards, average_r, length, faulty_episodes, (faulty_episodes*100.0)/episode)
                 if fault_in_episode:
                     # log fault
                     faulty_episodes += 1
                     fault_in_episode = False
                     # logger.warn('%d of %d episodes faulty so far (%f percent)', faulty_episodes, episode, (faulty_episodes*100.0)/episode)
+                if faulty_episodes > 0:
+                    logger.info('Episode %d finished. Sum of rewards: %1.4f, average so far %f. Length: %d. Faulty episodes: %d (%3.2f percent)',\
+                        episode, rewards, average_r, length, faulty_episodes, (faulty_episodes*100.0)/episode)
+                else:
+                    # if there are no faulty episodes, don't spam the log
+                    logger.info('Episode %d finished. Sum of rewards: %1.4f, average so far %f. Length: %d.',\
+                                episode, rewards, average_r, length)
                 length = 0
                 rewards = 0
                 break
@@ -209,10 +214,9 @@ should be computed.
             # the "policy gradients" loss:  its derivative is precisely the policy gradient
             # notice that self.ac is a placeholder that is provided externally.
             # adv will contain the advantages, as calculated in process_rollout
-            # Binary Cross Entropy Loss?
             pi_loss = - tf.reduce_sum(tf.reduce_sum(log_prob_tf * self.ac, [1]) * self.adv)
 
-            # loss of value function (Mean Squared Error Loss)
+            # loss of value function
             vf_loss = 0.5 * tf.reduce_sum(tf.square(pi.vf - self.r))
             entropy = - tf.reduce_sum(prob_tf * log_prob_tf)
 

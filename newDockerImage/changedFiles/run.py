@@ -476,10 +476,10 @@ class RewarderThread(threading.Thread):
         if done is None:
             logger.info_red('info object.done not set, returning done=False!!!')
             done = False
-        if not done and reward != 0:
+        if not done and reward != 0 and self.continuous_rewards == False:
             logger.info_red('not done but reward %f ! SHOULD NOT HAPPEN!!!', reward)
         elif reward != 0:
-            logger.info_green('done and reward %f', reward)
+            logger.info_green('done: %s and reward: %f', done, reward)
         return (reward, done)
 
     def _read_server_reward(self, server):
@@ -536,6 +536,12 @@ class RewarderThread(threading.Thread):
             query_id = self.env_controller.episode_config.get('query_id')
 
             if self.env_controller.rewarder and query_id: self.env_controller.rewarder.set_instruction_by_id(query_id)
+        else:
+            # miniwob ChaseCircle uses continuous_rewards, most other envs don't
+            if self.env_controller.env_status.env_id == 'wob.mini.ChaseCircle-v0':
+                self.continuous_rewards = True
+            else:
+                self.continuous_rewards = False
 
         env_info = self.env_controller.env_status.set_env_info('running')
         # logger.warn('Rewarder sent running')
