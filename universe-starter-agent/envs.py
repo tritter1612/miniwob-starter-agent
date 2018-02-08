@@ -437,7 +437,7 @@ class SoftmaxClickMouseClickAndSubmit(vectorized.ActionWrapper):
     """
     def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210), discrete_mouse_step=10, noclick_regions=[]):
         super(SoftmaxClickMouseClickAndSubmit, self).__init__(env)
-        logger.info('Using SoftmaxClickMouseSpecial with action_region={}, noclick_regions={}'.format(active_region, noclick_regions))
+        logger.info('Using SoftmaxClickMouseClickAndSubmit with action_region={}, noclick_regions={}'.format(active_region, noclick_regions))
         xlow, ylow, xhigh, yhigh = active_region
         xs = range(xlow, xhigh, discrete_mouse_step)
         ys = range(ylow, yhigh, discrete_mouse_step)
@@ -454,7 +454,7 @@ class SoftmaxClickMouseClickAndSubmit(vectorized.ActionWrapper):
                     removed += 1
                     continue
                 self._points.append((xc, yc))
-        logger.info('SoftmaxClickMouse noclick regions removed {} of {} actions'.format(removed, removed + len(self._points)))
+        logger.info('SoftmaxClickMouseClickAndSubmit noclick regions removed {} of {} actions'.format(removed, removed + len(self._points)))
         self.action_space = gym.spaces.Discrete(len(self._points))
 
     def _action(self, action_n):
