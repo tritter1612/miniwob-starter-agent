@@ -101,9 +101,12 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
     if env_id == 'wob.mini.NumberCheckboxes-v0':
         env = SoftmaxClickMouse(env, active_region=(10 + 14, 75 + 57, 24 + 55, 132 + 102 + 11 + 22), noclick_regions=[(24 + 11 + 2, 42, 132 + 102 + 9, 28)], discrete_mouse_step=17)
     elif (env_id == 'wob.mini.BisectAngle-v0') or (env_id == 'wob.mini.FindMidpoint-v0') or (env_id == 'wob.mini.CircleCenter-v0'):
-        env = SoftmaxClickMouseClickAndSubmit(env, active_region=(10, 75 + 50, 10 + 160, 75 + 210 - 35), discrete_mouse_step=8)
+        env = SoftmaxClickAndSubmit(env, discrete_mouse_step=8)
+    elif env_id == 'wob.mini.CopyPaste-v0':
+        env = SoftmaxMouseKeyboardCopyPaste(env, discrete_mouse_step=20)
     else:
         env = SoftmaxClickMouse(env, discrete_mouse_step=8)
+
     env = EpisodeID(env)
     env = DiagnosticsInfo(env)
     env = Unvectorize(env)
@@ -333,23 +336,20 @@ class WobRescale(vectorized.ObservationWrapper):
 
 
 def slither_vnc(space=False, left=False, right=False):
-    return [spaces.KeyEvent.by_name('space', down=space),
-            spaces.KeyEvent.by_name('left', down=left),
-            spaces.KeyEvent.by_name('right', down=right)]
+    return [vnc_spaces.KeyEvent.by_name('space', down=space),
+            vnc_spaces.KeyEvent.by_name('left', down=left),
+            vnc_spaces.KeyEvent.by_name('right', down=right)]
 
 def racing_vnc(up=False, left=False, right=False):
-    return [spaces.KeyEvent.by_name('up', down=up),
-            spaces.KeyEvent.by_name('left', down=left),
-            spaces.KeyEvent.by_name('right', down=right)]
+    return [vnc_spaces.KeyEvent.by_name('up', down=up),
+            vnc_spaces.KeyEvent.by_name('left', down=left),
+            vnc_spaces.KeyEvent.by_name('right', down=right)]
 
 def platform_vnc(up=False, left=False, right=False, space=False):
-    return [spaces.KeyEvent.by_name('up', down=up),
-            spaces.KeyEvent.by_name('left', down=left),
-            spaces.KeyEvent.by_name('right', down=right),
-            spaces.KeyEvent.by_name('space', down=space)]
-
-
-
+    return [vnc_spaces.KeyEvent.by_name('up', down=up),
+            vnc_spaces.KeyEvent.by_name('left', down=left),
+            vnc_spaces.KeyEvent.by_name('right', down=right),
+            vnc_spaces.KeyEvent.by_name('space', down=space)]
 
 
 class SoftmaxClickMouse(vectorized.ActionWrapper):
@@ -427,10 +427,10 @@ class SoftmaxClickMouse(vectorized.ActionWrapper):
         x, width, y, height = coords
         return x <= px <= x + width and y <= py <= y + height
 
-class SoftmaxClickMouseClickAndSubmit(SoftmaxClickMouse):
-    def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210), discrete_mouse_step=10, noclick_regions=[]):
-        super(SoftmaxClickMouseClickAndSubmit, self).__init__(env, active_region, discrete_mouse_step, noclick_regions)
-        logger.info('SoftmaxClickMouseClickAndSubmit was used')
+class SoftmaxClickAndSubmit(SoftmaxClickMouse):
+    def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210 - 35), discrete_mouse_step=10, noclick_regions=[]):
+        super(SoftmaxClickAndSubmit, self).__init__(env, active_region, discrete_mouse_step, noclick_regions)
+        logger.info('SoftmaxClickAndSubmit was used')
 
     def _discrete_to_action(self, i):
         xc, yc = self._points[i]
@@ -443,3 +443,48 @@ class SoftmaxClickMouseClickAndSubmit(SoftmaxClickMouse):
             vnc_spaces.PointerEvent(10 + 160 / 2, 75 + 50 + 160 - 30 / 2, buttonmask=1),  # click
             vnc_spaces.PointerEvent(10 + 160 / 2, 75 + 50 + 160 - 30 / 2, buttonmask=0),  # release
         ]
+
+class SoftmaxMouseKeyboardCopyPaste(SoftmaxClickMouse):
+    def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210), discrete_mouse_step=10, noclick_regions=[]):
+        super(SoftmaxMouseKeyboardCopyPaste, self).__init__(env, active_region, discrete_mouse_step, noclick_regions)
+        logger.info('SoftmaxMouseKeyboardCopyPaste was used')
+        self._action_code = 0
+
+    def _discrete_to_action(self, i):
+        xc, yc = self._points[i]
+        if self._action_code == 0:
+            self._action_code = 1
+            return [
+                # click in text field
+                vnc_spaces.PointerEvent(xc, yc, buttonmask=0),      # release
+                vnc_spaces.PointerEvent(xc, yc, buttonmask=1),      # click
+                vnc_spaces.PointerEvent(xc, yc, buttonmask=0),      # release
+                vnc_spaces.KeyEvent.by_name('ctrl', down=True),     # press
+                vnc_spaces.KeyEvent.by_name('a', down=True),        # press
+                vnc_spaces.KeyEvent.by_name('ctrl', down=False),    # release
+                vnc_spaces.KeyEvent.by_name('a', down=False),       # release
+                vnc_spaces.KeyEvent.by_name('ctrl', down=True),     # press
+                vnc_spaces.KeyEvent.by_name('c', down=True),        # press
+                vnc_spaces.KeyEvent.by_name('ctrl', down=False),    # release
+                vnc_spaces.KeyEvent.by_name('c', down=False)        # release
+            ]
+        elif self._action_code == 1:
+            self._action_code = 2
+            return [
+                # click in empty field
+                vnc_spaces.PointerEvent(xc, yc, buttonmask=0),  # release
+                vnc_spaces.PointerEvent(xc, yc, buttonmask=1),  # click
+                vnc_spaces.PointerEvent(xc, yc, buttonmask=0),  # release
+                vnc_spaces.KeyEvent.by_name('ctrl', down=True),     # press
+                vnc_spaces.KeyEvent.by_name('v', down=True),        # press
+                vnc_spaces.KeyEvent.by_name('ctrl', down=False),    # release
+                vnc_spaces.KeyEvent.by_name('v', down=False)        # release
+            ]
+        else:
+            self._action_code = 0
+            return [
+                # click submit button
+                vnc_spaces.PointerEvent(xc, yc, buttonmask=0),  # release
+                vnc_spaces.PointerEvent(xc, yc, buttonmask=1),  # click
+                vnc_spaces.PointerEvent(xc, yc, buttonmask=0),  # release
+            ]
