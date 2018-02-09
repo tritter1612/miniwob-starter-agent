@@ -101,7 +101,7 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
     if env_id == 'wob.mini.NumberCheckboxes-v0':
         env = SoftmaxClickMouse(env, active_region=(10 + 14, 75 + 57, 24 + 55, 132 + 102 + 11 + 22), noclick_regions=[(24 + 11 + 2, 42, 132 + 102 + 9, 28)], discrete_mouse_step=17)
     elif (env_id == 'wob.mini.BisectAngle-v0') or (env_id == 'wob.mini.FindMidpoint-v0') or (env_id == 'wob.mini.CircleCenter-v0'):
-        env = SoftmaxClickMouseClickAndSubmit(env, active_region=(10, 75 + 50, 10 + 160, 75 + 210 - 35), discrete_mouse_step=5)
+        env = SoftmaxClickMouseClickAndSubmit(env, active_region=(10, 75 + 50, 10 + 160, 75 + 210 - 35), discrete_mouse_step=8)
     else:
         env = SoftmaxClickMouse(env, discrete_mouse_step=8)
     env = EpisodeID(env)
