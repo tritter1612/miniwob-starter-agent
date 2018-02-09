@@ -104,16 +104,24 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
         env = SoftmaxClickAndSubmit(env, discrete_mouse_step=8)
     elif env_id == 'wob.mini.CopyPaste-v0':
         env = SoftmaxMouseKeyboardCopyPaste(env, discrete_mouse_step=20)
+    elif env_id == 'wob.mini.SimpleAlgebra-v0':
+        env = SoftmaxKeyboardAlgebra(env)
     else:
         env = SoftmaxClickMouse(env, discrete_mouse_step=8)
 
     env = EpisodeID(env)
     env = DiagnosticsInfo(env)
     env = Unvectorize(env)
-    env.configure(fps=5.0, remotes=remotes, start_timeout=15 * 60, client_id=client_id,
+    if env_id == 'wob.mini.SimpleAlgebra-v0':
+        env.configure(fps=1.0, remotes=remotes, start_timeout=15 * 60, client_id=client_id,
                   vnc_driver='go', vnc_kwargs={
                     'encoding': 'tight', 'compress_level': 0,
                     'fine_quality_level': 100, 'subsample_level': 0})
+    else:
+        env.configure(fps=5.0, remotes=remotes, start_timeout=15 * 60, client_id=client_id,
+                      vnc_driver='go', vnc_kwargs={
+                'encoding': 'tight', 'compress_level': 0,
+                'fine_quality_level': 100, 'subsample_level': 0})
     return env
 
 def DiagnosticsInfo(env, *args, **kwargs):
@@ -488,3 +496,46 @@ class SoftmaxMouseKeyboardCopyPaste(SoftmaxClickMouse):
                 vnc_spaces.PointerEvent(xc, yc, buttonmask=1),  # click
                 vnc_spaces.PointerEvent(xc, yc, buttonmask=0),  # release
             ]
+
+class SoftmaxKeyboardAlgebra(vectorized.ActionWrapper):
+    def __init__(self, env):
+        super(SoftmaxKeyboardAlgebra, self).__init__(env)
+        logger.info('SoftmaxKeyboardAlgebra was used')
+        self._keys = range (-99, 100)
+        self.action_space = gym.spaces.Discrete(len(self._keys))
+
+    def _action(self, action_n):
+        return [self._discrete_to_action(int(i)) for i in action_n]
+
+    def _discrete_to_action(self, i):
+        key = self._keys[i]
+        result = []
+        result.append(vnc_spaces.PointerEvent(10 + 110, 75 + 50 + 65, buttonmask=0))
+        result.append(vnc_spaces.PointerEvent(10 + 110, 75 + 50 + 65, buttonmask=1))
+        result.append(vnc_spaces.PointerEvent(10 + 110, 75 + 50 + 65, buttonmask=0))
+        if key >= 0:
+            if key < 10:
+                result.append(vnc_spaces.KeyEvent.by_name(str(key), down=True))
+                result.append(vnc_spaces.KeyEvent.by_name(str(key), down=False))
+            else:
+                result.append(vnc_spaces.KeyEvent.by_name(str(key)[:1], down=True))
+                result.append(vnc_spaces.KeyEvent.by_name(str(key)[:1], down=False))
+                result.append(vnc_spaces.KeyEvent.by_name(str(key)[1:], down=True))
+                result.append(vnc_spaces.KeyEvent.by_name(str(key)[1:], down=False))
+        else:
+            if key > -10:
+                result.append(vnc_spaces.KeyEvent.by_name('-', down=True))
+                result.append(vnc_spaces.KeyEvent.by_name('-', down=False))
+                result.append(vnc_spaces.KeyEvent.by_name(str(key)[1:], down=True))
+                result.append(vnc_spaces.KeyEvent.by_name(str(key)[1:], down=False))
+            else:
+                result.append(vnc_spaces.KeyEvent.by_name('-', down=True))
+                result.append(vnc_spaces.KeyEvent.by_name('-', down=False))
+                result.append(vnc_spaces.KeyEvent.by_name(str(key)[1:2], down=True))
+                result.append(vnc_spaces.KeyEvent.by_name(str(key)[1:2], down=False))
+                result.append(vnc_spaces.KeyEvent.by_name(str(key)[2:], down=True))
+                result.append(vnc_spaces.KeyEvent.by_name(str(key)[2:], down=False))
+        result.append(vnc_spaces.PointerEvent(10 + 160 / 2, 75 + 50 + 115, buttonmask=0))
+        result.append(vnc_spaces.PointerEvent(10 + 160 / 2, 75 + 50 + 115, buttonmask=1))
+        result.append(vnc_spaces.PointerEvent(10 + 160 / 2, 75 + 50 + 115, buttonmask=0))
+        return result
