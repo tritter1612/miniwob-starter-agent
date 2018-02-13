@@ -104,15 +104,15 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
         env = SoftmaxClickAndSubmit(env, discrete_mouse_step=8)
     elif env_id == 'wob.mini.CopyPaste-v0':
         env = SoftmaxMouseKeyboardCopyPaste(env, discrete_mouse_step=20)
-    elif env_id == 'wob.mini.SimpleAlgebra-v0':
-        env = SoftmaxKeyboardAlgebra(env)
+    elif (env_id == 'wob.mini.SimpleAlgebra-v0') or (env_id == 'wob.mini.SimpleArithmetic-v0') or (env_id == 'wob.mini.VisualAddition-v0'):
+        env = SoftmaxKeyboardMath(env)
     else:
         env = SoftmaxClickMouse(env, discrete_mouse_step=8)
 
     env = EpisodeID(env)
     env = DiagnosticsInfo(env)
     env = Unvectorize(env)
-    if env_id == 'wob.mini.SimpleAlgebra-v0':
+    if (env_id == 'wob.mini.SimpleAlgebra-v0') or (env_id == 'wob.mini.SimpleArithmetic-v0') or (env_id == 'wob.mini.VisualAddition-v0'):
         env.configure(fps=1.0, remotes=remotes, start_timeout=15 * 60, client_id=client_id,
                   vnc_driver='go', vnc_kwargs={
                     'encoding': 'tight', 'compress_level': 0,
@@ -480,9 +480,9 @@ class SoftmaxMouseKeyboardCopyPaste(SoftmaxClickMouse):
             self._action_code = 2
             return [
                 # click in empty field
-                vnc_spaces.PointerEvent(xc, yc, buttonmask=0),  # release
-                vnc_spaces.PointerEvent(xc, yc, buttonmask=1),  # click
-                vnc_spaces.PointerEvent(xc, yc, buttonmask=0),  # release
+                vnc_spaces.PointerEvent(xc, yc, buttonmask=0),      # release
+                vnc_spaces.PointerEvent(xc, yc, buttonmask=1),      # click
+                vnc_spaces.PointerEvent(xc, yc, buttonmask=0),      # release
                 vnc_spaces.KeyEvent.by_name('ctrl', down=True),     # press
                 vnc_spaces.KeyEvent.by_name('v', down=True),        # press
                 vnc_spaces.KeyEvent.by_name('ctrl', down=False),    # release
@@ -492,16 +492,21 @@ class SoftmaxMouseKeyboardCopyPaste(SoftmaxClickMouse):
             self._action_code = 0
             return [
                 # click submit button
-                vnc_spaces.PointerEvent(xc, yc, buttonmask=0),  # release
-                vnc_spaces.PointerEvent(xc, yc, buttonmask=1),  # click
-                vnc_spaces.PointerEvent(xc, yc, buttonmask=0),  # release
+                vnc_spaces.PointerEvent(xc, yc, buttonmask=0),      # release
+                vnc_spaces.PointerEvent(xc, yc, buttonmask=1),      # click
+                vnc_spaces.PointerEvent(xc, yc, buttonmask=0),      # release
             ]
 
-class SoftmaxKeyboardAlgebra(vectorized.ActionWrapper):
+class SoftmaxKeyboardMath(vectorized.ActionWrapper):
     def __init__(self, env):
-        super(SoftmaxKeyboardAlgebra, self).__init__(env)
-        logger.info('SoftmaxKeyboardAlgebra was used')
-        self._keys = range (-99, 100)
+        super(SoftmaxKeyboardMath, self).__init__(env)
+        logger.info('SoftmaxKeyboardMath was used')
+        if env.spec.id == 'wob.mini.SimpleAlgebra-v0':
+            self._keys = range(-99, 100)
+        elif env.spec.id == 'wob.mini.SimpleArithmetic-v0':
+            self._keys = range (-9, 100)
+        elif env.spec.id == 'wob.mini.VisualAddition-v0':
+            self._keys = range (0, 21)
         self.action_space = gym.spaces.Discrete(len(self._keys))
 
     def _action(self, action_n):
@@ -510,9 +515,20 @@ class SoftmaxKeyboardAlgebra(vectorized.ActionWrapper):
     def _discrete_to_action(self, i):
         key = self._keys[i]
         result = []
-        result.append(vnc_spaces.PointerEvent(10 + 110, 75 + 50 + 65, buttonmask=0))
-        result.append(vnc_spaces.PointerEvent(10 + 110, 75 + 50 + 65, buttonmask=1))
-        result.append(vnc_spaces.PointerEvent(10 + 110, 75 + 50 + 65, buttonmask=0))
+        # Click in text field
+        if self.env.spec.id == 'wob.mini.SimpleAlgebra-v0':
+            result.append(vnc_spaces.PointerEvent(10 + 110, 75 + 50 + 65, buttonmask=0))
+            result.append(vnc_spaces.PointerEvent(10 + 110, 75 + 50 + 65, buttonmask=1))
+            result.append(vnc_spaces.PointerEvent(10 + 110, 75 + 50 + 65, buttonmask=0))
+        elif self.env.spec.id == 'wob.mini.SimpleArithmetic-v0':
+            result.append(vnc_spaces.PointerEvent(10 + 140, 75 + 50 + 35, buttonmask=0))
+            result.append(vnc_spaces.PointerEvent(10 + 140, 75 + 50 + 35, buttonmask=1))
+            result.append(vnc_spaces.PointerEvent(10 + 140, 75 + 50 + 35, buttonmask=0))
+        elif self.env.spec.id == 'wob.mini.VisualAddition-v0':
+            result.append(vnc_spaces.PointerEvent(10 + 35, 75 + 50 + 125, buttonmask=0))
+            result.append(vnc_spaces.PointerEvent(10 + 35, 75 + 50 + 125, buttonmask=1))
+            result.append(vnc_spaces.PointerEvent(10 + 35, 75 + 50 + 125, buttonmask=0))
+        # Enter number
         if key >= 0:
             if key < 10:
                 result.append(vnc_spaces.KeyEvent.by_name(str(key), down=True))
@@ -535,7 +551,17 @@ class SoftmaxKeyboardAlgebra(vectorized.ActionWrapper):
                 result.append(vnc_spaces.KeyEvent.by_name(str(key)[1:2], down=False))
                 result.append(vnc_spaces.KeyEvent.by_name(str(key)[2:], down=True))
                 result.append(vnc_spaces.KeyEvent.by_name(str(key)[2:], down=False))
-        result.append(vnc_spaces.PointerEvent(10 + 160 / 2, 75 + 50 + 115, buttonmask=0))
-        result.append(vnc_spaces.PointerEvent(10 + 160 / 2, 75 + 50 + 115, buttonmask=1))
-        result.append(vnc_spaces.PointerEvent(10 + 160 / 2, 75 + 50 + 115, buttonmask=0))
+        # Click on submit button
+        if self.env.spec.id == 'wob.mini.SimpleAlgebra-v0':
+            result.append(vnc_spaces.PointerEvent(10 + 160 / 2, 75 + 50 + 115, buttonmask=0))
+            result.append(vnc_spaces.PointerEvent(10 + 160 / 2, 75 + 50 + 115, buttonmask=1))
+            result.append(vnc_spaces.PointerEvent(10 + 160 / 2, 75 + 50 + 115, buttonmask=0))
+        elif self.env.spec.id == 'wob.mini.SimpleArithmetic-v0':
+            result.append(vnc_spaces.PointerEvent(10 + 160 / 2, 75 + 50 + 83, buttonmask=0))
+            result.append(vnc_spaces.PointerEvent(10 + 160 / 2, 75 + 50 + 83, buttonmask=1))
+            result.append(vnc_spaces.PointerEvent(10 + 160 / 2, 75 + 50 + 83, buttonmask=0))
+        elif self.env.spec.id == 'wob.mini.VisualAddition-v0':
+            result.append(vnc_spaces.PointerEvent(10 + 110, 75 + 50 + 125, buttonmask=0))
+            result.append(vnc_spaces.PointerEvent(10 + 110, 75 + 50 + 125, buttonmask=1))
+            result.append(vnc_spaces.PointerEvent(10 + 110, 75 + 50 + 125, buttonmask=0))
         return result
