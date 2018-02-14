@@ -11,6 +11,7 @@ from universe import spaces as vnc_spaces
 from universe.spaces.vnc_event import keycode
 import time
 #from universe.wrappers.experimental import SoftmaxClickMouse
+import random
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 universe.configure_logging()
@@ -390,7 +391,10 @@ class SoftmaxClickMouse(vectorized.ActionWrapper):
         self.action_space = gym.spaces.Discrete(len(self._points))
 
     def _action(self, action_n):
-        return [self._discrete_to_action(int(i)) for i in action_n]
+        #return [self._discrete_to_action(int(i)) for i in action_n]
+        #return [self._random_action()]
+        return [self._no_action()]
+
 
     def _discrete_to_action(self, i):
         xc, yc = self._points[i]
@@ -399,6 +403,17 @@ class SoftmaxClickMouse(vectorized.ActionWrapper):
             vnc_spaces.PointerEvent(xc, yc, buttonmask=1), # click
             vnc_spaces.PointerEvent(xc, yc, buttonmask=0), # release
         ]
+
+    def _random_action(self):
+        xc, yc = random.choice(self._points)
+        return [
+            vnc_spaces.PointerEvent(xc, yc, buttonmask=0), # release
+            vnc_spaces.PointerEvent(xc, yc, buttonmask=1), # click
+            vnc_spaces.PointerEvent(xc, yc, buttonmask=0), # release
+        ]
+
+    def _no_action(self):
+        return
 
     def _reverse_action(self, action):
         xlow, ylow, xhigh, yhigh = self.active_region
