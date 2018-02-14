@@ -98,7 +98,7 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
     env = WobRescale(env, obs_height, obs_width)
 
     logger.info('create_miniwob_env(%s): ', env_id)
-
+    """
     if env_id == 'wob.mini.NumberCheckboxes-v0':
         env = SoftmaxClickMouse(env, active_region=(10 + 14, 75 + 57, 24 + 55, 132 + 102 + 11 + 22), noclick_regions=[(24 + 11 + 2, 42, 132 + 102 + 9, 28)], discrete_mouse_step=17)
     elif (env_id == 'wob.mini.BisectAngle-v0') or (env_id == 'wob.mini.FindMidpoint-v0') or (env_id == 'wob.mini.CircleCenter-v0'):
@@ -110,7 +110,9 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
     elif (env_id == 'wob.mini.DragBox-v0') or (env_id == 'wob.mini.HighlightText-v0') or (env_id == 'wob.mini.MovingItems-v0'):
         env = SoftmaxClickAndDrag(env, discrete_mouse_step=16)
     else:
-        env = SoftmaxClickMouse(env, discrete_mouse_step=8)
+        env = SoftmaxClickMouse(env, discrete_mouse_step=8)"""
+    
+    env = SoftmaxClickMouse(env, discrete_mouse_step=8, random=True)
 
     env = EpisodeID(env)
     env = DiagnosticsInfo(env)
