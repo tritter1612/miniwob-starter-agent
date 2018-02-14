@@ -368,7 +368,7 @@ class SoftmaxClickMouse(vectorized.ActionWrapper):
     This wrapper divides the active region into cells and creates an action for
     each which clicks in the middle of the cell.
     """
-    def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210), discrete_mouse_step=10, noclick_regions=[]):
+    def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210), discrete_mouse_step=10, noclick_regions=[], random=False, no_action=False):
         super(SoftmaxClickMouse, self).__init__(env)
         logger.info('Using SoftmaxClickMouse with action_region={}, noclick_regions={}'.format(active_region, noclick_regions))
         xlow, ylow, xhigh, yhigh = active_region
@@ -377,6 +377,8 @@ class SoftmaxClickMouse(vectorized.ActionWrapper):
         self.active_region = active_region
         self.discrete_mouse_step = discrete_mouse_step
         self.noclick_regions = noclick_regions
+        self.random = random
+        self.no_action = no_action
         self._points = []
         removed = 0
         for x in xs:
@@ -391,10 +393,11 @@ class SoftmaxClickMouse(vectorized.ActionWrapper):
         self.action_space = gym.spaces.Discrete(len(self._points))
 
     def _action(self, action_n):
-        #return [self._discrete_to_action(int(i)) for i in action_n]
-        #return [self._random_action()]
-        return [self._no_action()]
-
+        if self.random:
+            return [self._random_action()]
+        if self.no_action:
+            return [self._no_action()]
+        return [self._discrete_to_action(int(i)) for i in action_n]
 
     def _discrete_to_action(self, i):
         xc, yc = self._points[i]
