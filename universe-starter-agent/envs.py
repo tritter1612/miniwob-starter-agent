@@ -107,6 +107,8 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
         env = SoftmaxMouseKeyboardCopyPaste(env, discrete_mouse_step=20)
     elif (env_id == 'wob.mini.SimpleAlgebra-v0') or (env_id == 'wob.mini.SimpleArithmetic-v0') or (env_id == 'wob.mini.VisualAddition-v0'):
         env = SoftmaxKeyboardMath(env)
+    elif (env_id == 'wob.mini.DragBox-v0') or (env_id == 'wob.mini.HighlightText-v0') or (env_id == 'wob.mini.MovingItems-v0'):
+        env = SoftmaxClickAndDrag(env, discrete_mouse_step=16)
     else:
         env = SoftmaxClickMouse(env, discrete_mouse_step=8)
 
@@ -454,7 +456,7 @@ class SoftmaxClickMouse(vectorized.ActionWrapper):
         return x <= px <= x + width and y <= py <= y + height
 
 class SoftmaxClickAndSubmit(SoftmaxClickMouse):
-    def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210 - 35), discrete_mouse_step=10, noclick_regions=[]):
+    def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210 - 35), discrete_mouse_step=10, noclick_regions=[], random=False, no_action=False):
         super(SoftmaxClickAndSubmit, self).__init__(env, active_region, discrete_mouse_step, noclick_regions)
         logger.info('SoftmaxClickAndSubmit was used')
 
@@ -469,6 +471,30 @@ class SoftmaxClickAndSubmit(SoftmaxClickMouse):
             vnc_spaces.PointerEvent(10 + 160 / 2, 75 + 50 + 160 - 30 / 2, buttonmask=1),  # click
             vnc_spaces.PointerEvent(10 + 160 / 2, 75 + 50 + 160 - 30 / 2, buttonmask=0),  # release
         ]
+
+class SoftmaxClickAndDrag(SoftmaxClickMouse):
+    def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210 - 110), discrete_mouse_step=10, noclick_regions=[], random=False, no_action=False):
+        super(SoftmaxClickAndDrag, self).__init__(env, active_region, discrete_mouse_step, noclick_regions)
+        logger.info('SoftmaxClickAndDrag was used')
+        self._is_clicked = False
+
+    def _discrete_to_action(self, i):
+        xc, yc = self._points[i]
+        if self._is_clicked:
+            self._is_clicked = False
+            return [
+                vnc_spaces.PointerEvent(xc, yc, buttonmask=0),  # release
+                # Click Submit button
+                vnc_spaces.PointerEvent(10 + 47, 75 + 50 + 160 - 38, buttonmask=0),  # release
+                vnc_spaces.PointerEvent(10 + 47, 75 + 50 + 160 - 38, buttonmask=1),  # click
+                vnc_spaces.PointerEvent(10 + 47, 75 + 50 + 160 - 38, buttonmask=0),  # release
+            ]
+        else:
+            self._is_clicked = True
+            return [
+                vnc_spaces.PointerEvent(xc, yc, buttonmask=0),  # release
+                vnc_spaces.PointerEvent(xc, yc, buttonmask=1)   # click
+            ]
 
 class SoftmaxMouseKeyboardCopyPaste(SoftmaxClickMouse):
     def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210), discrete_mouse_step=10, noclick_regions=[]):
