@@ -98,21 +98,22 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
     env = WobRescale(env, obs_height, obs_width)
 
     logger.info('create_miniwob_env(%s): ', env_id)
-    """
+
+    random = True
+    no_action = False
+
     if env_id == 'wob.mini.NumberCheckboxes-v0':
-        env = SoftmaxClickMouse(env, active_region=(10 + 14, 75 + 57, 24 + 55, 132 + 102 + 11 + 22), noclick_regions=[(24 + 11 + 2, 42, 132 + 102 + 9, 28)], discrete_mouse_step=17)
+        env = SoftmaxClickTask(env, active_region=(10 + 14, 75 + 57, 24 + 55, 132 + 102 + 11 + 22), noclick_regions=[(24 + 11 + 2, 42, 132 + 102 + 9, 28)], discrete_mouse_step=17, random=random, no_action=no_action)
     elif (env_id == 'wob.mini.BisectAngle-v0') or (env_id == 'wob.mini.FindMidpoint-v0') or (env_id == 'wob.mini.CircleCenter-v0'):
-        env = SoftmaxClickAndSubmit(env, discrete_mouse_step=8)
+        env = SoftmaxClickTaskDirectSubmit(env, discrete_mouse_step=8, random=random, no_action=no_action)
     elif env_id == 'wob.mini.CopyPaste-v0':
-        env = SoftmaxMouseKeyboardCopyPaste(env, discrete_mouse_step=20)
+        env = SoftmaxCopyPasteTask(env, discrete_mouse_step=20, random=random, no_action=no_action)
     elif (env_id == 'wob.mini.SimpleAlgebra-v0') or (env_id == 'wob.mini.SimpleArithmetic-v0') or (env_id == 'wob.mini.VisualAddition-v0'):
-        env = SoftmaxKeyboardMath(env)
+        env = SoftmaxMathTasks(env)
     elif (env_id == 'wob.mini.DragBox-v0') or (env_id == 'wob.mini.HighlightText-v0') or (env_id == 'wob.mini.MovingItems-v0'):
-        env = SoftmaxClickAndDrag(env, discrete_mouse_step=16)
+        env = SoftmaxDragTask(env, discrete_mouse_step=16, random=random, no_action=no_action)
     else:
-        env = SoftmaxClickMouse(env, discrete_mouse_step=8)"""
-    
-    env = SoftmaxClickMouse(env, discrete_mouse_step=8, random=True)
+        env = SoftmaxClickTask(env, discrete_mouse_step=8, random=random, no_action=no_action)
 
     env = EpisodeID(env)
     env = DiagnosticsInfo(env)
@@ -365,7 +366,7 @@ def platform_vnc(up=False, left=False, right=False, space=False):
             vnc_spaces.KeyEvent.by_name('space', down=space)]
 
 
-class SoftmaxClickMouse(vectorized.ActionWrapper):
+class SoftmaxClickTask(vectorized.ActionWrapper):
     """
     Creates a Discrete action space of mouse clicks.
 
@@ -373,8 +374,8 @@ class SoftmaxClickMouse(vectorized.ActionWrapper):
     each which clicks in the middle of the cell.
     """
     def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210), discrete_mouse_step=10, noclick_regions=[], random=False, no_action=False):
-        super(SoftmaxClickMouse, self).__init__(env)
-        logger.info('Using SoftmaxClickMouse with action_region={}, noclick_regions={}'.format(active_region, noclick_regions))
+        super(SoftmaxClickTask, self).__init__(env)
+        logger.info('Using SoftmaxClickTask with action_region={}, noclick_regions={}'.format(active_region, noclick_regions))
         xlow, ylow, xhigh, yhigh = active_region
         xs = range(xlow, xhigh, discrete_mouse_step)
         ys = range(ylow, yhigh, discrete_mouse_step)
@@ -393,34 +394,24 @@ class SoftmaxClickMouse(vectorized.ActionWrapper):
                     removed += 1
                     continue
                 self._points.append((xc, yc))
-        logger.info('SoftmaxClickMouse noclick regions removed {} of {} actions'.format(removed, removed + len(self._points)))
+        logger.info('SoftmaxClickTask noclick regions removed {} of {} actions'.format(removed, removed + len(self._points)))
         self.action_space = gym.spaces.Discrete(len(self._points))
 
     def _action(self, action_n):
-        if self.random:
-            return [self._random_action()]
-        if self.no_action:
-            return [self._no_action()]
         return [self._discrete_to_action(int(i)) for i in action_n]
 
     def _discrete_to_action(self, i):
-        xc, yc = self._points[i]
+        if self._random:
+            xc, yc = random.choice(self._points)
+        elif self._no_action:
+            return
+        else:
+            xc, yc = self._points[i]
         return [
             vnc_spaces.PointerEvent(xc, yc, buttonmask=0), # release
             vnc_spaces.PointerEvent(xc, yc, buttonmask=1), # click
             vnc_spaces.PointerEvent(xc, yc, buttonmask=0), # release
         ]
-
-    def _random_action(self):
-        xc, yc = random.choice(self._points)
-        return [
-            vnc_spaces.PointerEvent(xc, yc, buttonmask=0), # release
-            vnc_spaces.PointerEvent(xc, yc, buttonmask=1), # click
-            vnc_spaces.PointerEvent(xc, yc, buttonmask=0), # release
-        ]
-
-    def _no_action(self):
-        return
 
     def _reverse_action(self, action):
         xlow, ylow, xhigh, yhigh = self.active_region
@@ -457,10 +448,10 @@ class SoftmaxClickMouse(vectorized.ActionWrapper):
         x, width, y, height = coords
         return x <= px <= x + width and y <= py <= y + height
 
-class SoftmaxClickAndSubmit(SoftmaxClickMouse):
+class SoftmaxClickTaskDirectSubmit(SoftmaxClickTask):
     def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210 - 35), discrete_mouse_step=10, noclick_regions=[], random=False, no_action=False):
-        super(SoftmaxClickAndSubmit, self).__init__(env, active_region, discrete_mouse_step, noclick_regions)
-        logger.info('SoftmaxClickAndSubmit was used')
+        super(SoftmaxClickTaskDirectSubmit, self).__init__(env, active_region, discrete_mouse_step, noclick_regions)
+        logger.info('SoftmaxClickTaskDirectSubmit was used')
 
     def _discrete_to_action(self, i):
         xc, yc = self._points[i]
@@ -474,13 +465,13 @@ class SoftmaxClickAndSubmit(SoftmaxClickMouse):
             vnc_spaces.PointerEvent(10 + 160 / 2, 75 + 50 + 160 - 30 / 2, buttonmask=0),  # release
         ]
 
-class SoftmaxClickAndDrag(SoftmaxClickMouse):
+class SoftmaxDragTask(SoftmaxClickTask):
     def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210 - 110), discrete_mouse_step=10, noclick_regions=[], random=False, no_action=False):
-        super(SoftmaxClickAndDrag, self).__init__(env, active_region, discrete_mouse_step, noclick_regions)
-        logger.info('SoftmaxClickAndDrag was used')
+        super(SoftmaxDragTask, self).__init__(env, active_region, discrete_mouse_step, noclick_regions)
+        logger.info('SoftmaxDragTask was used')
         self._is_clicked = False
 
-    def _discrete_to_action(self, i):
+    def _discrete_to_action(self, i): # TODO: Implement random agent
         xc, yc = self._points[i]
         if self._is_clicked:
             self._is_clicked = False
@@ -498,14 +489,22 @@ class SoftmaxClickAndDrag(SoftmaxClickMouse):
                 vnc_spaces.PointerEvent(xc, yc, buttonmask=1)   # click
             ]
 
-class SoftmaxMouseKeyboardCopyPaste(SoftmaxClickMouse):
-    def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210), discrete_mouse_step=10, noclick_regions=[]):
-        super(SoftmaxMouseKeyboardCopyPaste, self).__init__(env, active_region, discrete_mouse_step, noclick_regions)
-        logger.info('SoftmaxMouseKeyboardCopyPaste was used')
+class SoftmaxCopyPasteTask(SoftmaxClickTask):
+    def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210), discrete_mouse_step=10, noclick_regions=[], random=False, no_action=False):
+        super(SoftmaxCopyPasteTask, self).__init__(env, active_region, discrete_mouse_step, noclick_regions)
+        logger.info('SoftmaxCopyPasteTask was used')
+        self._random = random
+        self._no_action = no_action
         self._action_code = 0
 
     def _discrete_to_action(self, i):
-        xc, yc = self._points[i]
+        if self._random:
+            xc, yc = random.choice(self._points)
+            self._action_code = random.choice([0, 1, 2])
+        elif self._no_action:
+            return
+        else:
+            xc, yc = self._points[i]
         if self._action_code == 0:
             self._action_code = 1
             return [
@@ -543,10 +542,12 @@ class SoftmaxMouseKeyboardCopyPaste(SoftmaxClickMouse):
                 vnc_spaces.PointerEvent(xc, yc, buttonmask=0),      # release
             ]
 
-class SoftmaxKeyboardMath(vectorized.ActionWrapper):
-    def __init__(self, env):
-        super(SoftmaxKeyboardMath, self).__init__(env)
-        logger.info('SoftmaxKeyboardMath was used')
+class SoftmaxMathTasks(vectorized.ActionWrapper):
+    def __init__(self, env, random=False, no_action=False):
+        super(SoftmaxMathTasks, self).__init__(env)
+        logger.info('SoftmaxMathTasks was used')
+        self._random = random
+        self._no_action = no_action
         if env.spec.id == 'wob.mini.SimpleAlgebra-v0':
             self._keys = range(-99, 100)
         elif env.spec.id == 'wob.mini.SimpleArithmetic-v0':
@@ -559,7 +560,12 @@ class SoftmaxKeyboardMath(vectorized.ActionWrapper):
         return [self._discrete_to_action(int(i)) for i in action_n]
 
     def _discrete_to_action(self, i):
-        key = self._keys[i]
+        if self._random:
+            key = random.choice(self._keys)
+        elif self._no_action:
+            return
+        else:
+            key = self._keys[i]
         result = []
         # Click in text field
         if self.env.spec.id == 'wob.mini.SimpleAlgebra-v0':
