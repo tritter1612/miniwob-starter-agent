@@ -2,11 +2,15 @@ import logging
 
 import gym
 import numpy as np
+import universe
 from universe import spaces as vnc_spaces
 from universe import vectorized
+from universe.wrappers import Logger
 from universe.wrappers.gym_core import gym_core_action_space
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+universe.configure_logging()
 
 def slither_vnc(space=False, left=False, right=False):
     return [vnc_spaces.KeyEvent.by_name('space', down=space),
@@ -66,7 +70,7 @@ class SoftmaxClickTask(vectorized.ActionWrapper):
         return [
             vnc_spaces.PointerEvent(xc, yc, buttonmask=0), # release
             vnc_spaces.PointerEvent(xc, yc, buttonmask=1), # click
-            vnc_spaces.PointerEvent(xc, yc, buttonmask=0), # release
+            vnc_spaces.PointerEvent(xc, yc, buttonmask=0) # release
         ]
 
     def _reverse_action(self, action):
