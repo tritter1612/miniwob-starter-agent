@@ -24,7 +24,7 @@ class FastSaver(tf.train.Saver):
 
 def run(args, server):
     env = create_env(args.env_id, client_id=str(args.task), remotes=args.remotes)
-    trainer = A3C(env, args.task, args.visualise)
+    trainer = A3C(env, args.task, args.visualise, args.randomAgent)
 
     # Variable names that start with "local" are not saved in checkpoints.
     if use_tf12_api:
@@ -126,6 +126,10 @@ Setting up Tensorflow for data parallel work
     # Add visualisation argument
     parser.add_argument('--visualise', action='store_true',
                         help="Visualise the gym environment by running env.render() between each timestep")
+
+    # Add randomAgent argument
+    parser.add_argument('--randomAgent', action='store_true',
+                        help="run randomAgent")
 
     args = parser.parse_args()
     spec = cluster_spec(args.num_workers, 1)
