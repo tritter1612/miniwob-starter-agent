@@ -47,7 +47,7 @@ class SoftmaxClickTask(vectorized.ActionWrapper):
 
     def _discrete_to_action(self, i):
         if self.noAgent:
-            return
+            return []
         else:
             xc, yc = self._points[i]
         return [
@@ -64,10 +64,12 @@ class SoftmaxClickTask(vectorized.ActionWrapper):
 
 class SoftmaxClickTaskDirectSubmit(SoftmaxClickTask):
     def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210 - 35), discrete_mouse_step=10, noclick_regions=[], noAgent=False):
-        super(SoftmaxClickTaskDirectSubmit, self).__init__(env, active_region, discrete_mouse_step, noclick_regions)
+        super(SoftmaxClickTaskDirectSubmit, self).__init__(env, active_region, discrete_mouse_step, noclick_regions, noAgent)
         logger.info('SoftmaxClickTaskDirectSubmit was used')
 
     def _discrete_to_action(self, i):
+        if self.noAgent:
+            return []
         xc, yc = self._points[i]
         return [
             vnc_spaces.PointerEvent(xc, yc, buttonmask=0), # release
@@ -87,7 +89,7 @@ class SoftmaxDragTask(SoftmaxClickTask):
 
     def _discrete_to_action(self, i):
         if self.noAgent:
-            return
+            return []
         xc, yc = self._points[i % len(self._points)]
         if i < len(self._points):
             # Click on Object
@@ -115,6 +117,8 @@ class SoftmaxDragTaskDirectSubmit(SoftmaxClickTask):
         self._is_clicked = False
 
     def _discrete_to_action(self, i):
+        if self.noAgent:
+            return []
         xc, yc = self._points[i]
         if self._is_clicked:
             self._is_clicked = False
@@ -142,7 +146,7 @@ class SoftmaxCopyPasteTask(SoftmaxClickTask):
     def _discrete_to_action(self, i):
         merged_actions = self._points + self._keys
         if self.noAgent:
-            return
+            return []
         if type(merged_actions[i]) == tuple:
             xc, yc = merged_actions[i]
             # click in text field, in empty field or on submit button
@@ -175,7 +179,7 @@ class SoftmaxCopyPasteTaskWithOrder(SoftmaxClickTask): # TODO: Implement for ran
 
     def _discrete_to_action(self, i):
         if self.noAgent:
-            return
+            return []
         else:
             xc, yc = self._points[i]
         if self._action_code == 0:
@@ -230,7 +234,7 @@ class SoftmaxMathTasks(SoftmaxClickTask):
     def _discrete_to_action(self, i):
         merged_actions = list(self._keys) + self._points
         if self.noAgent:
-            return
+            return []
         else:
             if type(merged_actions[i]) == tuple:
                 xc, yc = merged_actions[i]
@@ -292,7 +296,7 @@ class SoftmaxMathTasksDirectSubmit(vectorized.ActionWrapper):
 
     def _discrete_to_action(self, i):
         if self.noAgent:
-            return
+            return []
         else:
             key = self._keys[i]
         result = []
