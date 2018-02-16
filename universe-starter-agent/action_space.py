@@ -230,7 +230,7 @@ class SoftmaxMathTasks(SoftmaxClickTask):
             self._keys = range(-9, 100)
         elif env.spec.id == 'wob.mini.VisualAddition-v0':
             self._keys = range(0, 21)
-        self.merged_actions = self._keys + self._points
+        self.merged_actions = list(self._keys) + self._points
         self.action_space = gym.spaces.Discrete(len(self.merged_actions))
 
     def _discrete_to_action(self, i):
@@ -246,7 +246,7 @@ class SoftmaxMathTasks(SoftmaxClickTask):
                     vnc_spaces.PointerEvent(xc, yc, buttonmask=0)
                 ]
             else:
-                key = merged_actions[i]
+                key = self.merged_actions[i]
                 # Enter number
                 if key >= 0:
                     if key < 10:
