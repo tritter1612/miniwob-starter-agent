@@ -141,14 +141,15 @@ class SoftmaxCopyPasteTask(SoftmaxClickTask):
         super(SoftmaxCopyPasteTask, self).__init__(env, active_region, discrete_mouse_step, noclick_regions, noAgent)
         logger.info('SoftmaxCopyPasteTask was used')
         self._keys = ['ctrl-a', 'ctrl-c', 'ctrl-v']
-        self.action_space = gym.spaces.Discrete(len(self._points) + len(self._keys))
+        self.merged_actions = self._points + self._keys
+        self.action_space = gym.spaces.Discrete(len(self.merged_actions))
+
 
     def _discrete_to_action(self, i):
-        merged_actions = self._points + self._keys
         if self.noAgent:
             return []
-        if type(merged_actions[i]) == tuple:
-            xc, yc = merged_actions[i]
+        if type(self.merged_actions[i]) == tuple:
+            xc, yc = self.merged_actions[i]
             # click in text field, in empty field or on submit button
             return [
                 vnc_spaces.PointerEvent(xc, yc, buttonmask=0),      # release
@@ -156,7 +157,7 @@ class SoftmaxCopyPasteTask(SoftmaxClickTask):
                 vnc_spaces.PointerEvent(xc, yc, buttonmask=0)       # release
             ]
         else:
-            key = merged_actions[i]
+            key = self.merged_actions[i]
             split1 = 'ctrl'
             if (key == 'ctrl-a'):
                 split2 = 'a'
@@ -229,15 +230,15 @@ class SoftmaxMathTasks(SoftmaxClickTask):
             self._keys = range(-9, 100)
         elif env.spec.id == 'wob.mini.VisualAddition-v0':
             self._keys = range(0, 21)
-        self.action_space = gym.spaces.Discrete(len(self._keys) + len(self._points))
+        self.merged_actions = self._keys + self._points
+        self.action_space = gym.spaces.Discrete(len(self.merged_actions))
 
     def _discrete_to_action(self, i):
-        merged_actions = list(self._keys) + self._points
         if self.noAgent:
             return []
         else:
-            if type(merged_actions[i]) == tuple:
-                xc, yc = merged_actions[i]
+            if type(self.merged_actions[i]) == tuple:
+                xc, yc = self.merged_actions[i]
                 return [
                     # Click in text field or on submit button
                     vnc_spaces.PointerEvent(xc, yc, buttonmask=0),
