@@ -351,3 +351,41 @@ class SoftmaxMathTasksDirectSubmit(vectorized.ActionWrapper):
             result.append(vnc_spaces.PointerEvent(10 + 110, 75 + 50 + 125, buttonmask=1))
             result.append(vnc_spaces.PointerEvent(10 + 110, 75 + 50 + 125, buttonmask=0))
         return result
+
+class SoftmaxFullKeyboardAndMouse(SoftmaxClickTask):
+    def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210), discrete_mouse_step=10, noclick_regions=[], noAgent=False):
+        super(SoftmaxFullKeyboardAndMouse, self).__init__(env, active_region, discrete_mouse_step, noclick_regions, noAgent)
+        logger.info('SoftmaxFullKeyboardAndMouse was used')
+        numKeys = list(range(0, 10))
+        letterKeys = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+                      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+        self._keys = numKeys + letterKeys
+        self.merged_actions = self._keys + self._points
+        self.action_space = gym.spaces.Discrete(len(self.merged_actions))
+
+    def _discrete_to_action(self, i):
+        if self.noAgent:
+            return []
+        else:
+            if type(self.merged_actions[i]) == tuple:
+                xc, yc = self.merged_actions[i]
+                # Click in text field or on submit button
+                return [
+                    vnc_spaces.PointerEvent(xc, yc, buttonmask=0),
+                    vnc_spaces.PointerEvent(xc, yc, buttonmask=1),
+                    vnc_spaces.PointerEvent(xc, yc, buttonmask=0)
+                ]
+            elif type(self.merged_actions[i]) == int:
+                num = self.merged_actions[i]
+                # Enter number
+                return [
+                    vnc_spaces.KeyEvent.by_name(str(num), down=True),
+                    vnc_spaces.KeyEvent.by_name(str(num), down=False)
+                ]
+            else:
+                letter = self.merged_actions[i]
+                # Enter letter
+                return [
+                    vnc_spaces.KeyEvent.by_name(str(letter), down=True),
+                    vnc_spaces.KeyEvent.by_name(str(letter), down=False)
+                ]

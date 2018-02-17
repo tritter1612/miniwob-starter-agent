@@ -102,7 +102,7 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
 
     if env_id == 'wob.mini.NumberCheckboxes-v0':
         env = ac_space.SoftmaxClickTask(env, active_region=(10 + 14, 75 + 57, 24 + 55, 132 + 102 + 11 + 22), noclick_regions=[(24 + 11 + 2, 42, 132 + 102 + 9, 28)], discrete_mouse_step=17, noAgent=noAgent)
-    elif (env_id == 'wob.mini.BisectAngle-v0') or (env_id == 'wob.mini.FindMidpoint-v0') or (env_id == 'wob.mini.CircleCenter-v0'):
+    elif (env_id == 'wob.mini.BisectAngle-v0') or (env_id == 'wob.mini.FindMidpoint-v0') or (env_id == 'wob.mini.CircleCenter-v0') or (env_id == 'wob.mini.RightAngle-v0'):
         env = ac_space.SoftmaxClickTask(env, discrete_mouse_step=8, noAgent=noAgent)
     elif env_id == 'wob.mini.CopyPaste-v0':
         env = ac_space.SoftmaxCopyPasteTask(env, discrete_mouse_step=20, noAgent=noAgent)
@@ -110,6 +110,8 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
         env = ac_space.SoftmaxMathTasks(env, noAgent=noAgent)
     elif (env_id == 'wob.mini.DragBox-v0') or (env_id == 'wob.mini.HighlightText-v0') or (env_id == 'wob.mini.MovingItems-v0'):
         env = ac_space.SoftmaxDragTask(env, discrete_mouse_step=16, noAgent=noAgent)
+    elif (env_id == 'wob.mini.TextTransform-v0'):
+        env = ac_space.SoftmaxFullKeyboardAndMouse(env, discrete_mouse_step=16, noAgent=noAgent)
     else:
         env = ac_space.SoftmaxClickTask(env, discrete_mouse_step=8, noAgent=noAgent)
 
