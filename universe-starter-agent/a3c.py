@@ -137,7 +137,7 @@ runner appends the policy to the queue.
     else:
         n = 100
     threshold = 0.9
-    time_limit = datetime.datetime.now() + datetime.timedelta(seconds=60)
+    time_limit = datetime.datetime.now() + datetime.timedelta(hours=12)
     r_queue = deque([])
 
     while True:
@@ -215,7 +215,7 @@ runner appends the policy to the queue.
                         logger.info('stopped learning because the time (12 hours) has expired')
                     else:
                         logger.info('stopped learning because learning is completed')
-                    os.system("\n tmux kill-session \n")
+                    os.system(" sudo poweroff \n")
                 break
 
         if not terminal_end:
