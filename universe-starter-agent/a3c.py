@@ -122,7 +122,18 @@ runner appends the policy to the queue.
     fault_in_episode = False
     average_r = 0.0
     sum_last_n_rewards = 0
-    n = 100
+    if (env.spec.id == 'wob.mini.ChaseCircle-v0') or (env.spec.id == 'wob.mini.NumberCheckboxes-v0') or (env.spec.id == 'wob.mini.MovingItems-v0'):
+        n = 20
+    elif (env.spec.id == 'wob.mini.SimonSays-v0') or (env.spec.id == 'wob.mini.SimpleAlgebra-v0'):
+        n = 30
+    elif (env.spec.id == 'wob.mini.TicTacToe-v0') or (env.spec.id == 'wob.mini.TextTransform-v0') or (env.spec.id == 'wob.mini.VisualAddition-v0'):
+        n = 50
+    elif (env.spec.id == 'wob.mini.RightAngle-v0') or (env.spec.id == 'wob.mini.CopyPaste-v0') or (env.spec.id == 'wob.mini.ScrollText-v0') or (env.spec.id == 'wob.mini.SimpleArithmetic-v0'):
+        n = 70
+    elif (env.spec.id == 'wob.mini.ClickDialog-v0') or (env.spec.id == 'wob.mini.ClickTest-v0') or (env.spec.id == 'wob.mini.ClickTest2-v0') or (env.spec.id == 'wob.mini.FocusText-v0'):
+        n = 160
+    else:
+        n = 100
     threshold = 0.9
     r_queue = deque([])
     success = False
