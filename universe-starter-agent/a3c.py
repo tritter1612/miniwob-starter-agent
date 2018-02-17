@@ -9,6 +9,7 @@ import threading
 import distutils.version
 import logging
 import random
+from collections import deque
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 use_tf12_api = distutils.version.LooseVersion(tf.VERSION) >= distutils.version.LooseVersion('0.12.0')
@@ -120,6 +121,11 @@ runner appends the policy to the queue.
     faulty_episodes = 0;
     fault_in_episode = False
     average_r = 0.0
+    sum_last_n_rewards = 0
+    n = 100
+    threshold = 0.9
+    r_queue = deque([])
+    success = False
 
     while True:
         terminal_end = False
@@ -165,6 +171,12 @@ runner appends the policy to the queue.
                 if env.spec.id == 'wob.mini.ChaseCircle-v0':
                     rewards = rewards / length
                 average_r = (average_r * (episode-1) + rewards) / episode
+                # store last n rewards and sum it up
+                if len(r_queue) >= n:
+                    sum_last_n_rewards -= r_queue.popleft()
+                r_queue.append(rewards)
+                sum_last_n_rewards += rewards
+                l = len(r_queue)
                 if fault_in_episode:
                     # log fault
                     faulty_episodes += 1
@@ -172,21 +184,25 @@ runner appends the policy to the queue.
                     # logger.warn('%d of %d episodes faulty so far (%f percent)', faulty_episodes, episode, (faulty_episodes*100.0)/episode)
                 if faulty_episodes > 0:
                     logger.info(
-                            'Episode %d finished. Sum of rewards: %1.4f, average so far: %f. Length: %d. Faulty episodes: %d (%3.2f percent)', \
-                            episode, rewards, average_r, length, faulty_episodes, (faulty_episodes * 100.0) / episode)
+                            'Episode %d finished. Length: %d. Sum of rewards: %1.4f, average so far: %f, average last %d rewards: %f. Faulty episodes: %d (%3.2f percent)', \
+                            episode, length, rewards, average_r, l, sum_last_n_rewards/l, faulty_episodes, (faulty_episodes * 100.0) / episode)
                 else:
                     # if there are no faulty episodes, don't spam the log
                     if env.spec.id == 'wob.mini.ChaseCircle-v0':
                         # special handling for continuous rewards
-                        logger.info('Episode %d finished. Sum of rewards per step: %1.4f, average per step so far: %f. Length: %d.', \
-                            episode, rewards, average_r, length)
+                        logger.info('Episode %d finished. Length: %d. Sum of rewards per step: %1.4f, average so far: %f, average last %d rewards: %f',
+                                episode, length, rewards, average_r, l, sum_last_n_rewards/l)
                     else:
-                        logger.info('Episode %d finished. Sum of rewards: %1.4f, average so far: %f. Length: %d.', \
-                            episode, rewards, average_r, length)
+                        logger.info('Episode %d finished. Length: %d. Sum of rewards: %1.4f, average so far: %f, average last %d rewards: %f', \
+                            episode, length, rewards, average_r, l, sum_last_n_rewards/l)
                 length = 0
                 rewards = 0
+                if n * threshold < sum_last_n_rewards:
+                    success = True
                 break
 
+        if success:
+            break
         if not terminal_end:
             rollout.r = policy.value(last_state, *last_features)
 
