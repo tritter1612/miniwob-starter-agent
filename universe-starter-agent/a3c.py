@@ -10,6 +10,8 @@ import distutils.version
 import logging
 import random
 from collections import deque
+import datetime
+import os
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 use_tf12_api = distutils.version.LooseVersion(tf.VERSION) >= distutils.version.LooseVersion('0.12.0')
@@ -135,8 +137,8 @@ runner appends the policy to the queue.
     else:
         n = 100
     threshold = 0.9
+    time_limit = datetime.datetime.now() + datetime.timedelta(seconds=60)
     r_queue = deque([])
-    success = False
 
     while True:
         terminal_end = False
@@ -208,12 +210,14 @@ runner appends the policy to the queue.
                             episode, length, rewards, average_r, l, sum_last_n_rewards/l)
                 length = 0
                 rewards = 0
-                if n * threshold < sum_last_n_rewards:
-                    success = True
+                if (n * threshold < sum_last_n_rewards) or (datetime.datetime.now() >= time_limit):
+                    if datetime.datetime.now() >= time_limit:
+                        logger.info('stopped learning because the time (12 hours) has expired')
+                    else:
+                        logger.info('stopped learning because learning is completed')
+                    os.system("\n tmux kill-session \n")
                 break
 
-        if success:
-            break
         if not terminal_end:
             rollout.r = policy.value(last_state, *last_features)
 
