@@ -16,7 +16,7 @@ import os
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 if platform.system() == 'Linux':
-    universe.configure_logging(path='$home/drlrpa/universe-starter-agent/logs/universe-{}.log'.format(os.getpid()))
+    universe.configure_logging(path='/home/edithritter0206/drlrpa/universe-starter-agent/logs/universe-{}.log'.format(os.getpid()))
 else:
     universe.configure_logging()
 
