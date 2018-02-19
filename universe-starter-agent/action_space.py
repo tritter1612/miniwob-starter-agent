@@ -10,7 +10,6 @@ from universe.wrappers.gym_core import gym_core_action_space
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-universe.configure_logging()
 
 class SoftmaxClickTask(vectorized.ActionWrapper):
     """
