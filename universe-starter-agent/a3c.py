@@ -125,17 +125,25 @@ runner appends the policy to the queue.
     average_r = 0.0
     sum_last_n_rewards = 0
     if (env.spec.id == 'wob.mini.ChaseCircle-v0') or (env.spec.id == 'wob.mini.NumberCheckboxes-v0') or (env.spec.id == 'wob.mini.MovingItems-v0'):
-        n = 20
-    elif (env.spec.id == 'wob.mini.SimonSays-v0') or (env.spec.id == 'wob.mini.SimpleAlgebra-v0'):
-        n = 30
-    elif (env.spec.id == 'wob.mini.TicTacToe-v0') or (env.spec.id == 'wob.mini.TextTransform-v0') or (env.spec.id == 'wob.mini.VisualAddition-v0'):
-        n = 50
-    elif (env.spec.id == 'wob.mini.RightAngle-v0') or (env.spec.id == 'wob.mini.CopyPaste-v0') or (env.spec.id == 'wob.mini.ScrollText-v0') or (env.spec.id == 'wob.mini.SimpleArithmetic-v0'):
-        n = 70
-    elif (env.spec.id == 'wob.mini.ClickDialog-v0') or (env.spec.id == 'wob.mini.ClickTest-v0') or (env.spec.id == 'wob.mini.ClickTest2-v0') or (env.spec.id == 'wob.mini.FocusText-v0'):
-        n = 160
-    else:
+        n = 65
+    if (env.spec.id == 'wob.mini.SimpleAlgebra-v0') or (env.spec.id == 'wob.mini.VisualAddition-v0'):
         n = 100
+    if (env.spec.id == 'wob.mini.SimonSays-v0') or (env.spec.id == 'wob.mini.TicTacToe-v0') or (env.spec.id == 'wob.mini.DragBox-v0') or (env.spec.id == 'wob.mini.SimpleArithmetic-v0') or (env.spec.id == 'wob.mini.TextTransform-v0'):
+        n = 160
+    if (env.spec.id == 'wob.mini.HighlightText-v0') or (env.spec.id == 'wob.mini.CopyPaste-v0') or (env.spec.id == 'wob.mini.ScrollText-v0'):
+        n = 200
+    if (env.spec.id == 'wob.mini.ClickButtonSequence-v0'):
+        n = 240
+    if (env.spec.id == 'wob.mini.BisectAngle-v0') or (env.spec.id == 'wob.mini.CircleCenter-v0')\
+            or (env.spec.id == 'wob.mini.ClickCollapsible-v0') or (env.spec.id == 'wob.mini.CountSides-v0') or (env.spec.id == 'wob.mini.FindMidpoint-v0') or (env.spec.id == 'wob.mini.RightAngle-v0'):
+        n = 260
+    if (env.spec.id == 'wob.mini.ClickDialog-v0'):
+        n = 310
+    if (env.spec.id == 'wob.mini.IdentifyShape-v0'):
+        n = 340
+    if (env.spec.id == 'wob.mini.ClickTest-v0'):
+        n = 410
+
     threshold = 0.9
     time_limit = datetime.datetime.now() + datetime.timedelta(hours=12)
     r_queue = deque([])
