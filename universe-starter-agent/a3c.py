@@ -144,7 +144,10 @@ runner appends the policy to the queue.
     if (env.spec.id == 'wob.mini.ClickTest-v0'):
         n = 410
 
-    threshold = 0.9
+    if (env.spec.id == 'wob.mini.ClickTest-v0') or (env.spec.id == 'wob.mini.CountSides-v0') or (env.spec.id == 'wob.mini.ClickDialog-v0') or (env.spec.id == 'wob.mini.ClickCollapsible-v0') or (env.spec.id == 'wob.mini.FocusText-v0'):
+        threshold = 0.93
+    else:
+        threshold = 0.9
     time_limit = datetime.datetime.now() + datetime.timedelta(hours=12)
     r_queue = deque([])
 
