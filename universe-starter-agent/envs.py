@@ -117,6 +117,8 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
         env = ac_space.SoftmaxDragTask(env, discrete_mouse_step=16, noAgent=noAgent)
     elif (env_id == 'wob.mini.TextTransform-v0'):
         env = ac_space.SoftmaxFullKeyboardAndMouse(env, discrete_mouse_step=16, noAgent=noAgent)
+    elif (env_id == 'wob.mini.TicTacToe-v0'):
+        env = ac_space.SoftmaxClickTask(env, discrete_mouse_step=55, noAgent=noAgent)
     else:
         env = ac_space.SoftmaxClickTask(env, discrete_mouse_step=8, noAgent=noAgent)
 
