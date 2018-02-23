@@ -119,8 +119,8 @@ runner appends the policy to the queue.
     last_features = policy.get_initial_features()
     length = 0
     rewards = 0
-    episode = 0;
-    faulty_episodes = 0;
+    episode = 0
+    faulty_episodes = 0
     fault_in_episode = False
     average_r = 0.0
     sum_last_n_rewards = 0
