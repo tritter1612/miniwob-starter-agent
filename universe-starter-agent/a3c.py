@@ -140,9 +140,13 @@ runner appends the policy to the queue.
     if (env.spec.id == 'wob.mini.ClickDialog-v0'):
         n = 310
     if (env.spec.id == 'wob.mini.IdentifyShape-v0'):
-        n = 340
+        n = 330
+    if (env.spec.id == 'wob.mini.ClickTest2-v0') or (env.spec.id == 'wob.mini.FocusText-v0'):
+        n = 350
     if (env.spec.id == 'wob.mini.ClickTest-v0'):
         n = 410
+    else:
+        n = 100
 
     if (env.spec.id == 'wob.mini.ClickTest-v0') or (env.spec.id == 'wob.mini.CountSides-v0') or (env.spec.id == 'wob.mini.ClickDialog-v0') or (env.spec.id == 'wob.mini.ClickCollapsible-v0') or (env.spec.id == 'wob.mini.FocusText-v0'):
         threshold = 0.93
