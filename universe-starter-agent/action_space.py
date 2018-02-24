@@ -81,7 +81,7 @@ class SoftmaxClickTaskDirectSubmit(SoftmaxClickTask):
         ]
 
 class SoftmaxDragTask(SoftmaxClickTask):
-    def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210 - 110), discrete_mouse_step=10, noclick_regions=[], noAgent=False):
+    def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210), discrete_mouse_step=10, noclick_regions=[], noAgent=False):
         super(SoftmaxDragTask, self).__init__(env, active_region, discrete_mouse_step, noclick_regions, noAgent)
         logger.info('SoftmaxDragTask was used')
         self.action_space = gym.spaces.Discrete(len(self._points) * 3)
