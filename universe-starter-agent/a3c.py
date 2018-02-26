@@ -128,9 +128,9 @@ runner appends the policy to the queue.
         n = 65
     if (env.spec.id == 'wob.mini.SimpleAlgebra-v0') or (env.spec.id == 'wob.mini.VisualAddition-v0'):
         n = 100
-    if (env.spec.id == 'wob.mini.SimonSays-v0') or (env.spec.id == 'wob.mini.DragBox-v0') or (env.spec.id == 'wob.mini.SimpleArithmetic-v0') or (env.spec.id == 'wob.mini.TextTransform-v0'):
+    if (env.spec.id == 'wob.mini.SimonSays-v0') or (env.spec.id == 'wob.mini.SimpleArithmetic-v0') or (env.spec.id == 'wob.mini.TextTransform-v0'):
         n = 160
-    if (env.spec.id == 'wob.mini.HighlightText-v0') or (env.spec.id == 'wob.mini.CopyPaste-v0') or (env.spec.id == 'wob.mini.ScrollText-v0') or (env.spec.id == 'wob.mini.TicTacToe-v0'):
+    if (env.spec.id == 'wob.mini.HighlightText-v0') or (env.spec.id == 'wob.mini.CopyPaste-v0') or (env.spec.id == 'wob.mini.ScrollText-v0') or (env.spec.id == 'wob.mini.TicTacToe-v0') or (env.spec.id == 'wob.mini.DragBox-v0'):
         n = 200
     if (env.spec.id == 'wob.mini.ClickButtonSequence-v0'):
         n = 240
