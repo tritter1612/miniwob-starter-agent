@@ -126,7 +126,7 @@ runner appends the policy to the queue.
     sum_last_n_rewards = 0
     n = 100
 
-    if (env.spec.id == 'wob.mini.ClickTest-v0') or (env.spec.id == 'wob.mini.CountSides-v0') or (env.spec.id == 'wob.mini.ClickDialog-v0') or (env.spec.id == 'wob.mini.ClickCollapsible-v0') or (env.spec.id == 'wob.mini.FocusText-v0') or (env.spec.id == 'wob.mini.IdentifyShape'):
+    if (env.spec.id == 'wob.mini.ClickTest-v0') or (env.spec.id == 'wob.mini.CountSides-v0') or (env.spec.id == 'wob.mini.ClickDialog-v0') or (env.spec.id == 'wob.mini.ClickCollapsible-v0') or (env.spec.id == 'wob.mini.FocusText-v0') or (env.spec.id == 'wob.mini.IdentifyShape-v0'):
         threshold = 0.95
     else:
         threshold = 0.9
