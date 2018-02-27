@@ -126,7 +126,7 @@ runner appends the policy to the queue.
     sum_last_n_rewards = 0
     n = 100
 
-    if (env.spec.id == 'wob.mini.ClickTest-v0') or (env.spec.id == 'wob.mini.CountSides-v0') or (env.spec.id == 'wob.mini.ClickDialog-v0') or (env.spec.id == 'wob.mini.ClickCollapsible-v0') or (env.spec.id == 'wob.mini.FocusText-v0'):
+    if (env.spec.id == 'wob.mini.ClickTest-v0') or (env.spec.id == 'wob.mini.CountSides-v0') or (env.spec.id == 'wob.mini.ClickDialog-v0') or (env.spec.id == 'wob.mini.ClickCollapsible-v0') or (env.spec.id == 'wob.mini.FocusText-v0') or (env.spec.id == 'wob.mini.IdentifyShape'):
         threshold = 0.93
     else:
         threshold = 0.9
@@ -209,7 +209,7 @@ runner appends the policy to the queue.
                         logger.info('stopped learning because the time (12 hours) has expired')
                     else:
                         logger.info('stopped learning because learning is completed')
-                    os.system(" sudo poweroff \n")
+                    os.system("tmux kill-session \n")
                 break
 
         if not terminal_end:
