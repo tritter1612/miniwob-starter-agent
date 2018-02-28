@@ -171,7 +171,7 @@ class SoftmaxCopyPasteTask(SoftmaxClickTask):
                 vnc_spaces.KeyEvent.by_name(split2, down=False)     # release
             ]
 
-class SoftmaxCopyPasteTaskWithOrder(SoftmaxClickTask): # TODO: Implement for random agent
+class SoftmaxCopyPasteTaskWithOrder(SoftmaxClickTask):
     def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210), discrete_mouse_step=10, noclick_regions=[], noAgent=False):
         super(SoftmaxCopyPasteTaskWithOrder, self).__init__(env, active_region, discrete_mouse_step, noclick_regions, noAgent)
         logger.info('SoftmaxCopyPasteTaskWithOrder was used')
