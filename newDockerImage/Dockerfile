@@ -6,3 +6,4 @@ COPY --chown=root:root changedFiles/simple-algebra.html /app/universe-envs/world
 COPY --chown=root:root changedFiles/visual-addition.html /app/universe-envs/world-of-bits/static/miniwob/
 COPY --chown=root:root changedFiles/number-checkboxes.html /app/universe-envs/world-of-bits/static/miniwob/
 COPY --chown=root:root changedFiles/moving-items.html /app/universe-envs/world-of-bits/static/miniwob/
+COPY --chown=root:root changedFiles/click-test.html /app/universe-envs/world-of-bits/static/miniwob/
