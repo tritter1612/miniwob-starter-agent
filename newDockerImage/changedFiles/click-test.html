@@ -15,12 +15,11 @@
 
 <script>
 var genProblem = function() {
-  var w = core.randi(35, 100);
-  var L = core.randi(0, 160 - w - 2);
-  var U = core.randi(0, 160 - w - 2);
-
+  var L = core.randi(0, 118); 
+  var U = core.randi(0, 118) + 50;
+  
   var btn = d3.select('#subbtn');
-  btn.attr('style', 'margin-left:'+L+'px; margin-top:'+U+'px; width:'+w+'px; height:'+w+'px;');
+  btn.attr('style', 'position:absolute; left:'+L+'px; top:'+U+'px');
   btn.on('click', function(){ core.endEpisode(1.0, true); });
 }
 
