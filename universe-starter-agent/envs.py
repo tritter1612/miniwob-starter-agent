@@ -113,8 +113,10 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
         env = ac_space.SoftmaxCopyPasteTaskWithOrder(env, discrete_mouse_step=20, noAgent=noAgent)
     elif (env_id == 'wob.mini.SimpleAlgebra-v0') or (env_id == 'wob.mini.SimpleArithmetic-v0') or (env_id == 'wob.mini.VisualAddition-v0'):
         env = ac_space.SoftmaxMathTasksDirectSubmit(env, noAgent=noAgent)
-    elif (env_id == 'wob.mini.DragBox-v0') or (env_id == 'wob.mini.HighlightText-v0'):
-        env = ac_space.SoftmaxDragTaskDirectSubmit(env, discrete_mouse_step=16, noAgent=noAgent)
+    elif (env_id == 'wob.mini.DragBox-v0'):
+        env = ac_space.SoftmaxDragTaskDirectSubmit(env, active_region=(10, 75 + 50, 10 + 160, 75 + 50 + 105), discrete_mouse_step=16, noAgent=noAgent)
+    elif (env_id == 'wob.mini.HighlightText-v0'):
+        env = ac_space.SoftmaxDragTaskDirectSubmit(env, active_region=(10, 75 + 50, 10 + 155, 75 + 50 + 50), discrete_mouse_step=16, noAgent=noAgent)
     elif (env_id == 'wob.mini.TextTransform-v0'):
         env = ac_space.SoftmaxFullKeyboardAndMouse(env, discrete_mouse_step=16, noAgent=noAgent)
     elif (env_id == 'wob.mini.TicTacToe-v0'):

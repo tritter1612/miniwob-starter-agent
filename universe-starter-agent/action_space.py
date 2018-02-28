@@ -121,13 +121,22 @@ class SoftmaxDragTaskDirectSubmit(SoftmaxClickTask):
         xc, yc = self._points[i]
         if self._is_clicked:
             self._is_clicked = False
-            return [
-                vnc_spaces.PointerEvent(xc, yc, buttonmask=0),  # release
-                # Click Submit button
-                vnc_spaces.PointerEvent(10 + 47, 75 + 50 + 160 - 38, buttonmask=0),  # release
-                vnc_spaces.PointerEvent(10 + 47, 75 + 50 + 160 - 38, buttonmask=1),  # click
-                vnc_spaces.PointerEvent(10 + 47, 75 + 50 + 160 - 38, buttonmask=0),  # release
-            ]
+            if self.env.spec.id == 'wob.mini.DragBox-v0':
+                return [
+                    vnc_spaces.PointerEvent(xc, yc, buttonmask=0),  # release
+                    # Click Submit button
+                    vnc_spaces.PointerEvent(10 + 47, 75 + 50 + 160 - 38, buttonmask=0),  # release
+                    vnc_spaces.PointerEvent(10 + 47, 75 + 50 + 160 - 38, buttonmask=1),  # click
+                    vnc_spaces.PointerEvent(10 + 47, 75 + 50 + 160 - 38, buttonmask=0)  # release
+                ]
+            else:
+                return [
+                    vnc_spaces.PointerEvent(xc, yc, buttonmask=0),  # release
+                    # Click Submit button
+                    vnc_spaces.PointerEvent(10 + 55, 75 + 50 + 67, buttonmask=0),  # release
+                    vnc_spaces.PointerEvent(10 + 55, 75 + 50 + 67, buttonmask=1),  # click
+                    vnc_spaces.PointerEvent(10 + 55, 75 + 50 + 67, buttonmask=0)  # release
+                ]
         else:
             self._is_clicked = True
             return [
