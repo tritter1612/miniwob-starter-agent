@@ -18,14 +18,14 @@
 </style>
 
 <script>
-var DIGITS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+var DIGITS = [0, 1];
 var MATH_ACTION = ['-', '+'];
 var genProblem = function(){
   d3.select('#math-problem').html('');
   d3.select('#math-answer')[0][0].value = '';
 
   var digitOne = core.sample(DIGITS);
-  var mathAnswer = core.randi(0,100);
+  var mathAnswer = core.randi(0,2);
   var action = core.sample(MATH_ACTION);
   var xFirst = core.sample([true, false]);
 
