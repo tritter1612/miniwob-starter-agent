@@ -128,7 +128,7 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
     env = DiagnosticsInfo(env)
     env = Unvectorize(env)
     if (env_id == 'wob.mini.SimpleAlgebra-v0') or (env_id == 'wob.mini.SimpleArithmetic-v0') or (env_id == 'wob.mini.VisualAddition-v0'):
-        env.configure(fps=1.0, remotes=remotes, start_timeout=15 * 60, client_id=client_id,
+        env.configure(fps=3.0, remotes=remotes, start_timeout=15 * 60, client_id=client_id,
                   vnc_driver='go', vnc_kwargs={
                     'encoding': 'tight', 'compress_level': 0,
                     'fine_quality_level': 100, 'subsample_level': 0})
