@@ -233,11 +233,11 @@ class SoftmaxMathTasks(SoftmaxClickTask):
         super(SoftmaxMathTasks, self).__init__(env, active_region, discrete_mouse_step, noclick_regions, noAgent)
         logger.info('SoftmaxMathTasks was used')
         if env.spec.id == 'wob.mini.SimpleAlgebra-v0':
-            self._keys = range(-99, 100)
+            self._keys = list(range(-99, 100))
         elif env.spec.id == 'wob.mini.SimpleArithmetic-v0':
-            self._keys = range(-9, 100)
+            self._keys = list(range(-9, 100))
         elif env.spec.id == 'wob.mini.VisualAddition-v0':
-            self._keys = range(0, 21)
+            self._keys = list(range(0, 21))
         self.merged_actions = list(self._keys) + self._points
         self.action_space = gym.spaces.Discrete(len(self.merged_actions))
 
@@ -293,11 +293,11 @@ class SoftmaxMathTasksDirectSubmit(vectorized.ActionWrapper):
         logger.info('SoftmaxMathTasksDirectSubmit was used')
         self.noAgent = noAgent
         if env.spec.id == 'wob.mini.SimpleAlgebra-v0':
-            self._keys = range(-99, 100)
+            self._keys = list(range(-99, 100))
         elif env.spec.id == 'wob.mini.SimpleArithmetic-v0':
-            self._keys = range (-9, 100)
+            self._keys = list(range(-9, 100))
         elif env.spec.id == 'wob.mini.VisualAddition-v0':
-            self._keys = range (0, 21)
+            self._keys = list(range(0, 21))
         self.action_space = gym.spaces.Discrete(len(self._keys))
 
     def _action(self, action_n):
