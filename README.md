@@ -99,7 +99,7 @@ The agent within this extension is still able to oeprate on atari environments. 
 
 To evaluate the performance of the algorithm it was compared to a random agent and a human playing solving the MiniWoB tasks. Since this method is not capable of NLP most of the environments had to be excluded. Furthermore some other environments turned out to be unstable. Therefore the evaluation of this tasks was impossible, too. After all there was 25 Environments remaining for evaluation. On these the agent was trained for 12 hours each unless it was finished beforehand.
 
-![Evaluation](https://github.com/tommi1612/miniwob-starter-agent/raw/master/imgs/Evaluation.png "Evaluation")
+![Evaluation](https://github.com/tommi1612/miniwob-starter-agent/raw/master/imgs/Evaluation_DRL_MiniWoB.png "Evaluation")
 
 On 35% of the tested tasks the agent was able to compete with human performance, while it did even outperform a human player on 22% of the evaluated tasks. 
 
