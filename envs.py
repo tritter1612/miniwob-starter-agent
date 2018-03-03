@@ -15,10 +15,7 @@ import platform
 import os
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-if platform.system() == 'Linux':
-    universe.configure_logging(path='/home/edithritter0206/drlrpa/universe-starter-agent/logs/universe-{}.log'.format(os.getpid()))
-else:
-    universe.configure_logging()
+universe.configure_logging()
 
 def create_env(env_id, client_id, remotes, **kwargs):
     spec = gym.spec(env_id)
