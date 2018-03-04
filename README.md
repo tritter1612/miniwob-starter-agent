@@ -19,6 +19,7 @@ This codebase implements an extension of the [universe starter agent](http://git
 * [numpy](https://pypi.python.org/pypi/numpy)
 * [scipy](https://pypi.python.org/pypi/scipy)
 * [Docker](https://www.docker.com)
+* [Conda](https://conda.io)
 
 
 ### Getting Started
@@ -49,7 +50,7 @@ pip install numpy --upgrade --ignore-installed
 
 ```
 
-Concluding it is important to build the [newDockerImage](https://github.com/tommi1612/drlrpa/tree/master/newDockerImage) and to replace the runtimes.yml file at the location where universe is installed with the [file](https://github.com/tommi1612/drlrpa/tree/master/universe/universe/runtimes.yml) inside this repository.
+Concluding it is important to build the [newDockerImage](https://github.com/tommi1612/miniwob-starter-agent/tree/master/newDockerImage) and to replace the runtimes.yml file at the location where universe is installed with the [file](https://github.com/tommi1612/miniwob-starter-agent/tree/master/runtimes.yml) inside this repository.
 
 ### MiniWoB ClickTest
 
@@ -92,12 +93,12 @@ You can stop the experiment with `tmux kill-session` command.
 
 ### Atari and Flashgames
 
-The agent within this extension is still able to oeprate on atari environments. To enable the use of flashgames environments the flashgames.json file must be added to the location where universe is locally installed.
+The agent within this extension is still able to operate on atari environments. To enable the use of flashgames environments the flashgames.json file must be added to the location where universe is locally installed.
 
 
 ### Evaluation
 
-To evaluate the performance of the algorithm it was compared to a random agent and a human playing solving the MiniWoB tasks. Since this method is not capable of NLP most of the environments had to be excluded. Furthermore some other environments turned out to be unstable. Therefore the evaluation of this tasks was impossible, too. After all there was 25 Environments remaining for evaluation. On these the agent was trained for 12 hours each unless it was finished beforehand.
+To evaluate the performance of the algorithm it was compared to a random agent and a human playing solving the MiniWoB tasks. Since this method is not capable of NLP most of the environments had to be excluded. Furthermore some other environments turned out to be unstable. Therefore the evaluation of this tasks was impossible, too. After all there were 25 Environments remaining for evaluation. On these the agent was trained for 12 hours each unless it was finished beforehand.
 
 ![Evaluation](https://github.com/tommi1612/miniwob-starter-agent/raw/master/imgs/Evaluation_DRL_MiniWoB.png "Evaluation")
 
