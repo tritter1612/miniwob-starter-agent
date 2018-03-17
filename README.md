@@ -50,7 +50,7 @@ pip install numpy --upgrade --ignore-installed
 
 ```
 
-Concluding it is important to build the [newDockerImage](https://github.com/tommi1612/miniwob-starter-agent/tree/master/newDockerImage) and to replace the runtimes.yml file at the location where universe is installed with the [file](https://github.com/tommi1612/miniwob-starter-agent/tree/master/runtimes.yml) inside this repository.
+Notice that it is important to build the [newDockerImage](https://github.com/tommi1612/miniwob-starter-agent/tree/master/newDockerImage) and to replace the runtimes.yml file at the location where universe is installed with the [file](https://github.com/tommi1612/miniwob-starter-agent/tree/master/runtimes.yml) inside this repository. There are also shell files available for an automatic installation on [Ubuntu](https://github.com/tommi1612/install-miniwob-starter-agent/blob/master/install%20miniwob-starter-agent-ubuntu.sh) or [MacOS](https://github.com/tommi1612/install-miniwob-starter-agent/blob/master/install%20miniwob-starter-agent-mac.sh).
 
 ### MiniWoB ClickTest
 
