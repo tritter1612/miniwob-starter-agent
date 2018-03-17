@@ -11,8 +11,6 @@ from universe import spaces as vnc_spaces
 from universe.spaces.vnc_event import keycode
 import time
 import action_space as ac_space
-import platform
-import os
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 universe.configure_logging()
@@ -91,6 +89,7 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
 
     env = CropScreen(env, 160, 160, 125, 10)
     if (env_id == 'wob.mini.NumberCheckboxes-v0') or (env_id == 'wob.mini.ChaseCircle-v0') or (env_id == 'wob.mini.BisectAngle-v0') or (env_id == 'wob.mini.FindMidpoint-v0') or (env_id == 'wob.mini.CircleCenter-v0'):
+        # These tasks won't need a sharp resolution to perform well; therefore 80x80 pixels should be enough
         obs_height = 80
         obs_width = 80
     else:
@@ -100,36 +99,46 @@ def create_miniwob_env(env_id, client_id, remotes, **_):
 
     logger.info('create_miniwob_env(%s): ', env_id)
 
-    noAgent = False
+    noAgent = False     # if True; no Agent will perform
 
     if env_id == 'wob.mini.NumberCheckboxes-v0':
+        # there are exact 29 possible actions to click at: the 28 checkboxes and 1 for the submit button
         env = ac_space.SoftmaxClickTask(env, active_region=(10 + 14, 75 + 57, 24 + 55, 132 + 102 + 11 + 22), noclick_regions=[(24 + 11 + 2, 42, 132 + 102 + 9, 28)], discrete_mouse_step=17, noAgent=noAgent)
     elif (env_id == 'wob.mini.BisectAngle-v0') or (env_id == 'wob.mini.FindMidpoint-v0') or (env_id == 'wob.mini.CircleCenter-v0') or (env_id == 'wob.mini.RightAngle-v0'):
-        env = ac_space.SoftmaxClickTaskDirectSubmit(env, discrete_mouse_step=8, noAgent=noAgent)
+        env = ac_space.SoftmaxClickTask(env, discrete_mouse_step=8, noAgent=noAgent)
     elif env_id == 'wob.mini.CopyPaste-v0':
-        env = ac_space.SoftmaxCopyPasteTaskWithOrder(env, discrete_mouse_step=20, noAgent=noAgent)
+        # makes use of a special SoftmaxCopyPasteTask class that offers the actions of ctrl+a, ctrl+c, ctrl+v and mouse clicks
+        env = ac_space.SoftmaxCopyPasteTask(env, discrete_mouse_step=20, noAgent=noAgent)
     elif (env_id == 'wob.mini.SimpleAlgebra-v0') or (env_id == 'wob.mini.SimpleArithmetic-v0') or (env_id == 'wob.mini.VisualAddition-v0'):
-        env = ac_space.SoftmaxMathTasksDirectSubmit(env, noAgent=noAgent)
+        # these tasks make use of the SoftmaxMathTask class which defines special action_space handling
+        env = ac_space.SoftmaxMathTask(env, noAgent=noAgent)
     elif (env_id == 'wob.mini.DragBox-v0'):
-        env = ac_space.SoftmaxDragTaskDirectSubmit(env, active_region=(10, 75 + 50, 10 + 160, 75 + 50 + 105), discrete_mouse_step=16, noAgent=noAgent)
+        # makes use of a special SoftmaxDragTask class that unclicks when clicked and vice versa, the active_region is adapted to the task
+        env = ac_space.SoftmaxDragTask(env, active_region=(10, 75 + 50, 10 + 160, 75 + 50 + 105), discrete_mouse_step=16, noAgent=noAgent)
     elif (env_id == 'wob.mini.HighlightText-v0'):
-        env = ac_space.SoftmaxDragTaskDirectSubmit(env, active_region=(10, 75 + 50, 10 + 155, 75 + 50 + 50), discrete_mouse_step=16, noAgent=noAgent)
+        # makes use of a special SoftmaxDragTask class that unclicks when clicked and vice versa, the active_region is adapted to the task
+        env = ac_space.SoftmaxDragTask(env, active_region=(10, 75 + 50, 10 + 155, 75 + 50 + 50), discrete_mouse_step=16, noAgent=noAgent)
     elif (env_id == 'wob.mini.TextTransform-v0'):
-        env = ac_space.SoftmaxFullKeyboardAndMouse(env, discrete_mouse_step=16, noAgent=noAgent)
+        # makes use of all keyboard letters and mouse clicks
+        env = ac_space.SoftmaxFullLettersAndMouse(env, discrete_mouse_step=16, noAgent=noAgent)
     elif (env_id == 'wob.mini.TicTacToe-v0'):
+        # allows just 9 fields to click in
         env = ac_space.SoftmaxClickTask(env, discrete_mouse_step=55, noAgent=noAgent)
     else:
+        # the dimension of the action_space for all other tasks are 20x20 = 400
         env = ac_space.SoftmaxClickTask(env, discrete_mouse_step=8, noAgent=noAgent)
 
     env = EpisodeID(env)
     env = DiagnosticsInfo(env)
     env = Unvectorize(env)
     if (env_id == 'wob.mini.SimpleAlgebra-v0') or (env_id == 'wob.mini.SimpleArithmetic-v0') or (env_id == 'wob.mini.VisualAddition-v0'):
+        # a fps rate above 3.0 on these tasks leads to instability issues due to the asynchronity between the browser inside of the docker image and the agent
         env.configure(fps=3.0, remotes=remotes, start_timeout=15 * 60, client_id=client_id,
                   vnc_driver='go', vnc_kwargs={
                     'encoding': 'tight', 'compress_level': 0,
                     'fine_quality_level': 100, 'subsample_level': 0})
     else:
+        # all regular tasks perform on 5.0 fps
         env.configure(fps=5.0, remotes=remotes, start_timeout=15 * 60, client_id=client_id,
                       vnc_driver='go', vnc_kwargs={
                 'encoding': 'tight', 'compress_level': 0,
@@ -203,7 +212,6 @@ class DiagnosticsInfoI(vectorized.Filter):
                 to_log["diagnostics/vnc_updates_rectangles"] = info["stats.vnc.updates.rectangles"]
             if info.get("env_status.state_id") is not None:
                 to_log["diagnostics/env_state_id"] = info["env_status.state_id"]
-            # what of these statistics (see iuniverse/wrapper.logger.py) is part of our console output?
 
         if reward is not None:
             self._episode_reward += reward
@@ -338,9 +346,12 @@ class FlashRescale(vectorized.ObservationWrapper):
 def _process_frame_wob(frame, obs_height, obs_width):
     if (obs_height != 160) or (obs_width != 160):
         frame = cv2.resize(frame, (obs_height, obs_width))
+
+    # transforms 3 color channels into 1 greyscale channel
     frame = frame.mean(2)
     frame = frame.astype(np.float32)
     frame *= (1.0 / 255.0)
+
     frame = np.reshape(frame, [obs_height, obs_width, 1])
     return frame
 

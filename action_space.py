@@ -62,6 +62,12 @@ class SoftmaxClickTask(vectorized.ActionWrapper):
         return x <= px <= x + width and y <= py <= y + height
 
 class SoftmaxClickTaskDirectSubmit(SoftmaxClickTask):
+    """
+    Creates a Discrete action space of mouse clicks.
+    After one mouse click there is a click on the submit button following.
+    This class was created to simulate a reward function assigns the reward immediately after one click.
+    It works with the following tasks: BisectAngle, CircleCenter, FindMidpoint & RightAngle
+    """
     def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210 - 35), discrete_mouse_step=10, noclick_regions=[], noAgent=False):
         super(SoftmaxClickTaskDirectSubmit, self).__init__(env, active_region, discrete_mouse_step, noclick_regions, noAgent)
         logger.info('SoftmaxClickTaskDirectSubmit was used')
@@ -81,6 +87,14 @@ class SoftmaxClickTaskDirectSubmit(SoftmaxClickTask):
         ]
 
 class SoftmaxDragTask(SoftmaxClickTask):
+    """
+    Creates a Discrete action space of mouse clicks and drag movements.
+    There are 3 different kind of actions performable:
+                1. a normal click without a release
+                2. a release of the clicked mouse
+                3. a usual click with release
+    This class is normally used in combination with the DragBox or the HighlightText environment
+    """
     def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210), discrete_mouse_step=10, noclick_regions=[], noAgent=False):
         super(SoftmaxDragTask, self).__init__(env, active_region, discrete_mouse_step, noclick_regions, noAgent)
         logger.info('SoftmaxDragTask was used')
@@ -110,6 +124,16 @@ class SoftmaxDragTask(SoftmaxClickTask):
             ]
 
 class SoftmaxDragTaskDirectSubmit(SoftmaxClickTask):
+    """
+    Creates a Discrete action space of mouse clicks and drag movements.
+    There are 2 different kind of actions performable:
+                1. a normal click without a release
+                2. a release of the clicked mouse
+    There is a boolean variable indicating whether the mouse is clicked or not.
+    If the mouse is already clicked the only action performable is the release and vice versa.
+    The click on the submit button after every mouse release is hardcoded to simulate the immediate reward assignment after a performed action.
+    It works with the DragBox and the HighlightText environment.
+    """
     def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210 - 110), discrete_mouse_step=10, noclick_regions=[], noAgent=False):
         super(SoftmaxDragTaskDirectSubmit, self).__init__(env, active_region, discrete_mouse_step, noclick_regions, noAgent)
         logger.info('SoftmaxDragTaskDirectSubmit was used')
@@ -145,6 +169,15 @@ class SoftmaxDragTaskDirectSubmit(SoftmaxClickTask):
             ]
 
 class SoftmaxCopyPasteTask(SoftmaxClickTask):
+    """
+    Creates a Discrete action space of mouse clicks and the keyboard input ctrl+a, ctrl+c, ctrl+v.
+    There are 4 different kind of actions performable:
+                1. a usual mouse click
+                2. ctrl+a
+                3. ctrl+c
+                4. ctrl+v
+    This class was created to perfectly fit the needs of the CopyPaste environment.
+    """
     def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210), discrete_mouse_step=10, noclick_regions=[], noAgent=False):
         super(SoftmaxCopyPasteTask, self).__init__(env, active_region, discrete_mouse_step, noclick_regions, noAgent)
         logger.info('SoftmaxCopyPasteTask was used')
@@ -181,6 +214,14 @@ class SoftmaxCopyPasteTask(SoftmaxClickTask):
             ]
 
 class SoftmaxCopyPasteTaskWithOrder(SoftmaxClickTask):
+    """
+    Creates a Discrete action space of mouse clicks and the keyboard input ctrl+a, ctrl+c, ctrl+v.
+    There are 3 different kind of actions performable:
+                1. a mouse click + ctrl-a + ctrl-c (aimed for the text field)
+                2. a mouse click + ctrl-v (aimed for the empty field)
+                3. a mouse click (aimed for the submit button)
+    This class always executes this actions in that exact order to increase the chance to succeed.
+    """
     def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210), discrete_mouse_step=10, noclick_regions=[], noAgent=False):
         super(SoftmaxCopyPasteTaskWithOrder, self).__init__(env, active_region, discrete_mouse_step, noclick_regions, noAgent)
         logger.info('SoftmaxCopyPasteTaskWithOrder was used')
@@ -228,10 +269,17 @@ class SoftmaxCopyPasteTaskWithOrder(SoftmaxClickTask):
                 vnc_spaces.PointerEvent(xc, yc, buttonmask=0),      # release
             ]
 
-class SoftmaxMathTasks(SoftmaxClickTask):
+class SoftmaxMathTask(SoftmaxClickTask):
+    """
+    Creates a discrete action space of mouse clicks and the keyboard input of a number.
+    There are 2 possible actions performable:
+            1. a mouse click
+            2. a number typed by the keyboard
+    The applicable numbers depend on the specified environment. They are placed between -99 & 99.
+    """
     def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210), discrete_mouse_step=10, noclick_regions=[], noAgent=False):
-        super(SoftmaxMathTasks, self).__init__(env, active_region, discrete_mouse_step, noclick_regions, noAgent)
-        logger.info('SoftmaxMathTasks was used')
+        super(SoftmaxMathTask, self).__init__(env, active_region, discrete_mouse_step, noclick_regions, noAgent)
+        logger.info('SoftmaxMathTask was used')
         if env.spec.id == 'wob.mini.SimpleAlgebra-v0':
             self._keys = list(range(-99, 100))
         elif env.spec.id == 'wob.mini.SimpleArithmetic-v0':
@@ -287,10 +335,16 @@ class SoftmaxMathTasks(SoftmaxClickTask):
                             vnc_spaces.KeyEvent.by_name(str(key)[2:], down=False)
                         ]
 
-class SoftmaxMathTasksDirectSubmit(vectorized.ActionWrapper):
+class SoftmaxMathTaskDirectSubmit(vectorized.ActionWrapper):
+    """
+    Creates a discrete action space of mouse clicks and the keyboard inputs of numbers.
+    The numbers are specified for the different environments and lie between -99 & 99.
+    The click inside the text field and on the submit button are hardcoded to lay the focus on the selection of the correct number.
+    Therefore this class simulates the use of a different reward function assigning rewards immediately after inserting a number.
+    """
     def __init__(self, env, noAgent=False):
-        super(SoftmaxMathTasksDirectSubmit, self).__init__(env)
-        logger.info('SoftmaxMathTasksDirectSubmit was used')
+        super(SoftmaxMathTaskDirectSubmit, self).__init__(env)
+        logger.info('SoftmaxMathTaskDirectSubmit was used')
         self.noAgent = noAgent
         if env.spec.id == 'wob.mini.SimpleAlgebra-v0':
             self._keys = list(range(-99, 100))
@@ -360,10 +414,15 @@ class SoftmaxMathTasksDirectSubmit(vectorized.ActionWrapper):
             result.append(vnc_spaces.PointerEvent(10 + 110, 75 + 50 + 125, buttonmask=0))
         return result
 
-class SoftmaxFullKeyboardAndMouse(SoftmaxClickTask):
+class SoftmaxFullLettersAndMouse(SoftmaxClickTask):
+    """
+    Creates a discrete action space of mouse clicks and the keyboard inputs of letters.
+    It is possible to make use of all letters of the alphabet in upper and lower case.
+    Either the agent chooses to click somewhere (i.e. the text field or the submit button) or to write a letter.
+    """
     def __init__(self, env, active_region=(10, 75 + 50, 10 + 160, 75 + 210), discrete_mouse_step=10, noclick_regions=[], noAgent=False):
-        super(SoftmaxFullKeyboardAndMouse, self).__init__(env, active_region, discrete_mouse_step, noclick_regions, noAgent)
-        logger.info('SoftmaxFullKeyboardAndMouse was used')
+        super(SoftmaxFullLettersAndMouse, self).__init__(env, active_region, discrete_mouse_step, noclick_regions, noAgent)
+        logger.info('SoftmaxFullLettersAndMouse was used')
         numKeys = list(range(0, 10))
         letterKeys = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
                       'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']

@@ -141,7 +141,7 @@ runner appends the policy to the queue.
             fetched = policy.act(last_state, *last_features)
             action, value_, features = fetched[0], fetched[1], fetched[2:]
             if randomAgent:
-                logger.info('randomAgent is used; actions will be chosen randomly')
+                # randomly chose an action
                 state, reward, terminal, info = env.step(random.choice(range(0, len(action))))
             else:
                 # argmax to convert from one-hot
@@ -175,6 +175,7 @@ runner appends the policy to the queue.
                     last_state = env.reset()
                 last_features = policy.get_initial_features()
                 episode += 1
+                # ChaseCircle needs a special treatment due to the continuous reward function it is using
                 if env.spec.id == 'wob.mini.ChaseCircle-v0':
                     rewards = rewards / length
                 average_r = (average_r * (episode-1) + rewards) / episode
@@ -188,7 +189,6 @@ runner appends the policy to the queue.
                     # log fault
                     faulty_episodes += 1
                     fault_in_episode = False
-                    # logger.warn('%d of %d episodes faulty so far (%f percent)', faulty_episodes, episode, (faulty_episodes*100.0)/episode)
                 if faulty_episodes > 0:
                     logger.info(
                             'Episode %d finished. Length: %d. Sum of rewards: %1.4f, average so far: %f, average last %d rewards: %f. Faulty episodes: %d (%3.2f percent)', \
@@ -208,7 +208,7 @@ runner appends the policy to the queue.
                     if datetime.datetime.now() >= time_limit:
                         logger.info('stopped learning because the time (12 hours) has expired')
                     else:
-                        logger.info('stopped learning because learning is completed')
+                        logger.info('stopped learning because threshold is reached')
                     os.system("tmux kill-session \n")
                 break
 
@@ -261,7 +261,7 @@ should be computed.
             bs = tf.to_float(tf.shape(pi.x)[0])
             self.loss = pi_loss + 0.5 * vf_loss - entropy * 0.01
 
-            # 20 represents the number of "local steps":  the number of timesteps
+            # 30 represents the number of "local steps":  the number of timesteps
             # we run the policy before we update the parameters.
             # The larger local steps is, the lower is the variance in our policy gradients estimate
             # on the one hand;  but on the other hand, we get less frequent parameter updates, which
@@ -329,7 +329,7 @@ server.
 
         sess.run(self.sync)  # copy weights from shared to local
         rollout = self.pull_batch_from_queue()
-        batch = process_rollout(rollout, gamma=0.99, lambda_=1)
+        batch = process_rollout(rollout, gamma=0.99, lambda_=1.0)
 
         should_compute_summary = self.task == 0 and self.local_steps % 11 == 0
 

@@ -45,13 +45,20 @@ def categorical_sample(logits, d):
     return tf.one_hot(value, d)
 
 class GRUPolicy(object):
+    """
+    This class builds up the network. There are 4 convolutional layers followed by a recurrent layer making use
+    of GRU cells (http://arxiv.org/abs/1406.1078) inspired by louiehelm (https://github.com/louiehelm/universe-starter-agent/tree/gru).
+    Every convolutional layer features 32 filters of the size 3x3 that are using a stride size of 2x2.
+    There are 256 GRU cells in the RNN layer.
+    """
     def __init__(self, ob_space, ac_space):
         self.x = x = tf.placeholder(tf.float32, [None] + list(ob_space))
 
         for i in range(4):
             x = tf.nn.elu(conv2d(x, 32, "l{}".format(i + 1), [3, 3], [2, 2]))
-        # introduce a "fake" batch dimension of 1 after flatten so that we can do LSTM over time dim
+        # introduce a "fake" batch dimension of 1 after flatten so that we can do GRU over time dim
         x = tf.expand_dims(flatten(x), 1)
+        # perform a dropout of 10%
         x = tf.nn.dropout(x, 0.9)
         size = 256
         gru = rnn.GRUCell(size)
