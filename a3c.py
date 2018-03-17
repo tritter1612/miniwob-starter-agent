@@ -153,7 +153,7 @@ runner appends the policy to the queue.
             # log rewards and count faulty episodes
             if reward != 0:
                 logger.info('Episode %d step %d: reward: %f, sum of rewards: %f', episode+1, length, reward, rewards)
-                if not terminal and not fault_in_episode and env.spec.id != 'wob.mini.ChaseCircle-v0':
+                if not terminal and not fault_in_episode and env.spec.id != 'wob.mini.ChaseCircle-v0' and env.spec.id.startswith('wob.mini'):
                     fault_in_episode = True
             last_state = state
             last_features = features
