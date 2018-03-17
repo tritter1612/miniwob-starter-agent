@@ -124,12 +124,9 @@ runner appends the policy to the queue.
     fault_in_episode = False
     average_r = 0.0
     sum_last_n_rewards = 0
-    n = 100
+    n = 1000
 
-    if (env.spec.id == 'wob.mini.ClickTest-v0') or (env.spec.id == 'wob.mini.CountSides-v0') or (env.spec.id == 'wob.mini.ClickDialog-v0') or (env.spec.id == 'wob.mini.ClickCollapsible-v0') or (env.spec.id == 'wob.mini.FocusText-v0') or (env.spec.id == 'wob.mini.IdentifyShape-v0'):
-        threshold = 0.95
-    else:
-        threshold = 0.9
+    threshold = 0.9
     time_limit = datetime.datetime.now() + datetime.timedelta(hours=12)
     r_queue = deque([])
 
@@ -204,7 +201,7 @@ runner appends the policy to the queue.
                             episode, length, rewards, average_r, l, sum_last_n_rewards/l)
                 length = 0
                 rewards = 0
-                if (n * threshold < sum_last_n_rewards) or (datetime.datetime.now() >= time_limit):
+                if env.spec.id.startswith('wob.mini') and ((n * threshold < sum_last_n_rewards) or (datetime.datetime.now() >= time_limit)):
                     if datetime.datetime.now() >= time_limit:
                         logger.info('stopped learning because the time (12 hours) has expired')
                     else:
