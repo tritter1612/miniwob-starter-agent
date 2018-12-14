@@ -1,6 +1,6 @@
 # MiniWoB-starter-agent
 
-This codebase implements an extension of the [universe starter agent](http://github.com/openai/universe-starter-agent) provided by OpenAI that is able to solve a number of [MiniWoB](http://alpha.openai.com/miniwob/) environments.
+This codebase implements an extension of the [universe starter agent](http://github.com/openai/universe-starter-agent) provided by OpenAI that is able to solve a number of [MiniWoB](http://proceedings.mlr.press/v70/shi17a.html) environments.
 
 ![MiniWoB](https://github.com/tritter1612/miniwob-starter-agent/raw/master/imgs/MiniWoB.jpg "MiniWoB")
 
@@ -103,7 +103,7 @@ To evaluate the performance of the algorithm it was compared to a random agent a
 
 ![Evaluation](https://github.com/tritter1612/miniwob-starter-agent/raw/master/imgs/Evaluation_DRL_MiniWoB.png "Evaluation")
 
-On 35% of the tested tasks the agent was able to compete with human performance, while it did even outperform a human player on 22% of the evaluated tasks.
+On 35% of the tested tasks the agent was able to compete with a human player, while it did even outperform a human player on 22% of the evaluated tasks.
 
 ![IdentifyShape](https://github.com/tritter1612/miniwob-starter-agent/raw/master/imgs/IdentifyShape.gif "IdentifyShape") 
 
