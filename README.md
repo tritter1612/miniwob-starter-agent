@@ -74,7 +74,7 @@ To access TensorBoard to see various monitoring metrics of the agent, open [http
 
 ![tensorboardIdentifyShape](https://github.com/tritter1612/miniwob-starter-agent/raw/master/imgs/tbIdentifyShape.png "tensorboardIdentifyShape")
 
-The VNC environments are hosted on the EC2 cloud and have an interface that's different from a conventional Atari Gym
+The VNC environments are hosted on the Google cloud and have an interface that's different from a conventional Atari Gym
 environment;  luckily, with the help of several wrappers (which are used within `envs.py` file)
 the experience should be similar to the agent as if it was played locally. The problem itself is more difficult
 because the observations and actions are delayed due to the latency induced by the network.
